@@ -9,5 +9,106 @@
   "tabs": {
     "submit": "Submit Data",
     "analytics": "View Analytics"
+  },
+  "form": {
+    "submitTitle": "Submit Crop Data",
+    "submitDescription": "Enter your farming details for regional insights",
+    "submittingFor": "Submitting for:",
+    "progress": {
+      "stepOf": "Step {{current}} of {{total}}"
+    },
+    "intro": {
+      "title": "Getting started",
+      "body": "This simple form will guide you step-by-step. You will fill one detail at a time. It takes about a minute.",
+      "items": {
+        "crop": "Crop you grew",
+        "area": "Area of land (in acres)",
+        "harvested": "Harvested amount (in tons)",
+        "wastage": "Wastage percentage",
+        "reason": "Main reason for wastage",
+        "confirm": "Confirmation that details are correct"
+      },
+      "note": "You can move back and forward anytime. Your district will be filled automatically.",
+      "start": "Start"
+    },
+    "steps": {
+      "crop": {
+        "title": "Crop Type",
+        "description": "Select the crop you grew this season. This helps us compare production across your district."
+      },
+      "area": {
+        "title": "Area Cultivated (acres)",
+        "description": "Enter total land used for this crop in acres. Use decimals if needed, e.g., 10.5."
+      },
+      "harvested_amount": {
+        "title": "Harvested Amount (tons)",
+        "description": "Total quantity harvested in metric tons. If not harvested yet, enter 0."
+      },
+      "wastage": {
+        "title": "Wastage (%)",
+        "description": "Approximate percentage of the harvest lost or wasted (0 to 100)."
+      },
+      "reason": {
+        "title": "Reason for Wastage",
+        "description": "Choose the main reason for wastage. This helps identify support needs."
+      },
+      "attestation": {
+        "title": "Confirm Accuracy",
+        "description": "Please confirm the information you provided is correct to the best of your knowledge."
+      }
+    },
+    "labels": {
+      "crop": "Crop Type *",
+      "area": "Area Cultivated (acres) *",
+      "harvested_amount": "Harvested Amount (tons) *",
+      "wastage": "Wastage (%) *",
+      "reason": "Reason for Wastage *",
+      "attestation": "Confirm Accuracy *"
+    },
+    "placeholders": {
+      "crop": "Select crop type",
+      "area": "e.g., 10.5",
+      "harvested_amount": "e.g., 25.0",
+      "wastage": "e.g., 5.0",
+      "reason": "Select reason"
+    },
+    "reasons": {
+      "weather": "Weather",
+      "pest": "Pest Attack",
+      "transport": "Transport",
+      "overproduction": "Overproduction",
+      "other": "Other"
+    },
+    "attestation": {
+      "text": "I confirm the data provided is accurate to the best of my knowledge and may be subject to verification."
+    },
+    "buttons": {
+      "back": "Back",
+      "next": "Next",
+      "submit": "Submit Data",
+      "submitting": "Submitting..."
+    },
+    "toasts": {
+      "authRequired": {
+        "title": "Authentication required",
+        "desc": "Please log in to submit data."
+      },
+      "submitSuccess": {
+        "title": "Data submitted successfully!",
+        "desc": "Your crop data has been recorded."
+      },
+      "submitError": {
+        "title": "Failed to submit data",
+        "desc": "Please try again later."
+      }
+    },
+    "validation": {
+      "cropRequired": "Please select a crop type",
+      "areaPositive": "Area must be greater than 0",
+      "harvestedNonNegative": "Harvested amount must be 0 or greater",
+      "wastageRange": "Wastage must be between 0 and 100",
+      "reasonRequired": "Please select a reason",
+      "attestationConfirm": "You must confirm the data is accurate"
+    }
   }
 }
