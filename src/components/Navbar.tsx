@@ -61,17 +61,17 @@ export function Navbar() {
                             <DropdownMenu>
                                 <DropdownMenuTrigger asChild>
                                     <div className="flex items-center gap-2 cursor-pointer select-none">
-                                        <Avatar>
-                                            <AvatarFallback>
-                                                {profile.name?.split(" ").map((n: string) => n[0]).slice(0, 2).join("") || "U"}
-                                            </AvatarFallback>
-                                        </Avatar>
                                         <div className="hidden md:flex flex-col items-end leading-tight">
                                             <span
                                                 className="text-sm font-medium max-w-[160px] truncate">{profile.name}</span>
                                             <span
                                                 className="text-xs text-muted-foreground max-w-[160px] truncate">{profile.province}</span>
                                         </div>
+                                        <Avatar>
+                                            <AvatarFallback>
+                                                {profile.name?.split(" ").map((n: string) => n[0]).slice(0, 2).join("") || "U"}
+                                            </AvatarFallback>
+                                        </Avatar>
                                     </div>
                                 </DropdownMenuTrigger>
                                 <DropdownMenuContent align="end" className="w-56">
