@@ -3,5 +3,11 @@
   "filters": {
     "date": "Date",
     "region": "Region"
+  },
+  "welcomeTitle": "Welcome to Your Dashboard",
+  "welcomeSubtitle": "Submit crop data and view provincial analytics",
+  "tabs": {
+    "submit": "Submit Data",
+    "analytics": "View Analytics"
   }
 }
