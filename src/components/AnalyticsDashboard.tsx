@@ -9,6 +9,7 @@ import {Card, CardContent} from "@/components/ui/card";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
 import {Label} from "@/components/ui/label";
 import {Button} from "@/components/ui/button";
+import {useTranslation} from "react-i18next";
 
 interface FarmerData {
     id: number;
@@ -47,6 +48,7 @@ export function AnalyticsDashboard({refreshKey}: AnalyticsDashboardProps) {
     const [selectedCrop, setSelectedCrop] = useState<string>("All");
     const [showFilters, setShowFilters] = useState<boolean>(false);
     const filtersContentRef = useRef<HTMLDivElement | null>(null);
+    const {t} = useTranslation("dashboard");
 
     useEffect(() => {
         if (profile) {
@@ -242,10 +244,8 @@ export function AnalyticsDashboard({refreshKey}: AnalyticsDashboardProps) {
             <Card className="shadow-[var(--shadow-card)] border-border/50">
                 <CardContent className="py-12 text-center">
                     <Database className="h-12 w-12 mx-auto mb-4 text-muted-foreground"/>
-                    <h3 className="text-lg font-semibold mb-2">No Data Yet</h3>
-                    <p className="text-muted-foreground">
-                        Submit your first crop data to see analytics here.
-                    </p>
+                    <h3 className="text-lg font-semibold mb-2">{t("analytics.noData.title")}</h3>
+                    <p className="text-muted-foreground">{t("analytics.noData.desc")}</p>
                 </CardContent>
             </Card>
         );
@@ -257,7 +257,7 @@ export function AnalyticsDashboard({refreshKey}: AnalyticsDashboardProps) {
                 <div
                     className="flex items-center justify-between rounded-md border border-border/60 bg-muted/30 px-3 py-2">
                     <div className="flex items-center gap-2 min-w-0">
-                        <span className="text-xs text-muted-foreground shrink-0">Analytics scope:</span>
+                        <span className="text-xs text-muted-foreground shrink-0">{t("analytics.scopeLabel")}</span>
                         <div className="flex items-center gap-1 text-sm font-medium text-foreground truncate">
                             <span
                                 className="inline-flex items-center rounded-full bg-primary/10 px-2 py-0.5 text-primary text-xs truncate max-w-[40vw]">
@@ -280,7 +280,7 @@ export function AnalyticsDashboard({refreshKey}: AnalyticsDashboardProps) {
                     <Button variant="outline" size="sm" className="gap-2" onClick={() => setShowFilters((v) => !v)}>
                         <SlidersHorizontal
                             className={`h-4 w-4 transition-transform duration-300 ${showFilters ? "rotate-90" : "rotate-0"}`}/>
-                        {showFilters ? "Hide" : "Filters"}
+                        {showFilters ? t("analytics.filters.hide") : t("analytics.filters.show")}
                     </Button>
                 </div>
             )}
@@ -297,13 +297,13 @@ export function AnalyticsDashboard({refreshKey}: AnalyticsDashboardProps) {
                     <CardContent className="pt-6" ref={filtersContentRef}>
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                             <div className="space-y-2">
-                                <Label>Province</Label>
+                                <Label>{t("analytics.filters.province")}</Label>
                                 <Select
                                     value={selectedProvince ?? ""}
                                     onValueChange={(v) => setSelectedProvince(v)}
                                 >
                                     <SelectTrigger className="bg-background">
-                                        <SelectValue placeholder="Select province"/>
+                                        <SelectValue placeholder={t("analytics.filters.placeholders.province")}/>
                                     </SelectTrigger>
                                     <SelectContent className="bg-popover z-50">
                                         {provinces.map((p) => (
@@ -314,16 +314,16 @@ export function AnalyticsDashboard({refreshKey}: AnalyticsDashboardProps) {
                             </div>
 
                             <div className="space-y-2">
-                                <Label>District</Label>
+                                <Label>{t("analytics.filters.district")}</Label>
                                 <Select
                                     value={selectedDistrict}
                                     onValueChange={(v) => setSelectedDistrict(v)}
                                 >
                                     <SelectTrigger className="bg-background">
-                                        <SelectValue placeholder="All"/>
+                                        <SelectValue placeholder={t("analytics.filters.placeholders.all")}/>
                                     </SelectTrigger>
                                     <SelectContent className="bg-popover z-50">
-                                        <SelectItem value="All">All</SelectItem>
+                                        <SelectItem value="All">{t("analytics.filters.placeholders.all")}</SelectItem>
                                         {districts.map((d) => (
                                             <SelectItem key={d} value={d}>{d}</SelectItem>
                                         ))}
@@ -332,16 +332,16 @@ export function AnalyticsDashboard({refreshKey}: AnalyticsDashboardProps) {
                             </div>
 
                             <div className="space-y-2">
-                                <Label>Crop</Label>
+                                <Label>{t("analytics.filters.crop")}</Label>
                                 <Select
                                     value={selectedCrop}
                                     onValueChange={(v) => setSelectedCrop(v)}
                                 >
                                     <SelectTrigger className="bg-background">
-                                        <SelectValue placeholder="All"/>
+                                        <SelectValue placeholder={t("analytics.filters.placeholders.all")}/>
                                     </SelectTrigger>
                                     <SelectContent className="bg-popover z-50">
-                                        <SelectItem value="All">All</SelectItem>
+                                        <SelectItem value="All">{t("analytics.filters.placeholders.all")}</SelectItem>
                                         {crops.map((c) => (
                                             <SelectItem key={c} value={c}>{c}</SelectItem>
                                         ))}
@@ -356,28 +356,28 @@ export function AnalyticsDashboard({refreshKey}: AnalyticsDashboardProps) {
             {/* Stats Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                 <StatCard
-                    title="Total Submissions"
+                    title={t("analytics.stats.totalSubmissions.title")}
                     value={data.totalSubmissions}
                     icon={Database}
-                    description="Farmer data entries"
+                    description={t("analytics.stats.totalSubmissions.desc")}
                 />
                 <StatCard
-                    title="Total Harvested"
-                    value={`${data.totalYield.toFixed(1)} tons`}
+                    title={t("analytics.stats.totalHarvested.title")}
+                    value={`${data.totalYield.toFixed(1)} ${t("analytics.stats.totalHarvested.valueSuffixTons")}`}
                     icon={TrendingUp}
-                    description="Sum of reported harvests"
+                    description={t("analytics.stats.totalHarvested.desc")}
                 />
                 <StatCard
-                    title="Avg. Wastage"
+                    title={t("analytics.stats.avgWastage.title")}
                     value={`${data.avgWastage.toFixed(1)}%`}
                     icon={AlertTriangle}
-                    description="Average crop wastage"
+                    description={t("analytics.stats.avgWastage.desc")}
                 />
                 <Card className="shadow-[var(--shadow-card)] border-border/50 hover:shadow-lg transition-shadow">
                     <CardContent className="pt-6">
                         <div className="flex items-start justify-between">
                             <div className="space-y-2">
-                                <p className="text-sm font-medium text-muted-foreground">Top Crops</p>
+                                <p className="text-sm font-medium text-muted-foreground">{t("analytics.topCrops.title")}</p>
                                 <div className="space-y-1">
                                     {data.topCrops.map((crop, idx) => (
                                         <p key={idx} className="text-sm font-semibold text-foreground">
