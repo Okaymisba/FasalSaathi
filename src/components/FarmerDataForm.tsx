@@ -350,7 +350,7 @@ export function FarmerDataForm({onSuccess}: FarmerDataFormProps) {
                                 }
                             >
                                 <div className="animate-container">
-                                    <div className="animate-item">
+                                    <div className="animate-item mb-6 md:mb-8">
                                         {steps[currentStep].key === "crop" && (
                                             <div className="space-y-2">
                                                 <Label htmlFor="crop">Crop Type *</Label>
@@ -475,7 +475,7 @@ export function FarmerDataForm({onSuccess}: FarmerDataFormProps) {
                                     </div>
 
                                     {/* Navigation Buttons */}
-                                    <div className="flex gap-3">
+                                    <div className="flex gap-3 mt-4 pt-2">
                                         <Button
                                             type="button"
                                             variant="outline"
