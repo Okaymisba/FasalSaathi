@@ -427,6 +427,7 @@ export function FarmerDataForm({onSuccess}: FarmerDataFormProps) {
                                             type="button"
                                             variant="outline"
                                             className="w-1/2"
+                                            onClick={goBack}
                                             disabled={showIntro || isSubmitting}
                                         >
                                             {t("form.buttons.back")}
