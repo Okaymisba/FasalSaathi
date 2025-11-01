@@ -290,11 +290,13 @@ export function FarmerDataForm({onSuccess}: FarmerDataFormProps) {
             <CardContent className="pt-6">
                 <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
                     {profile && (
-                        <div className="p-4 rounded-lg bg-primary/10 border border-primary/20">
-                            <p className="text-sm font-medium mb-1">{t("form.submittingFor")}</p>
-                            <p className="text-xs text-muted-foreground">
+                        <div
+                            className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-gradient-to-r from-primary/5 to-primary/10 border border-primary/20 text-sm text-foreground/80">
+                            <span className="font-medium">{t("form.submittingFor")}</span>
+                            <span className="font-semibold text-primary flex items-center">
+                                <span className="inline-block w-1 h-1 rounded-full bg-primary/60 mr-1.5"></span>
                                 {profile.province} • {profile.district}
-                            </p>
+                            </span>
                         </div>
                     )}
                     {/* Intro Screen */}
