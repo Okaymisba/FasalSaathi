@@ -44,6 +44,11 @@
     },
     "topCrops": {
       "title": "مٿيان فصل"
+    },
+    "cropDistribution": {
+      "title": "فصلن جو ورهاست",
+      "description": "فصل جي قسمن مطابق داخلن جو تعداد",
+      "submissions": "داخلا"
     }
   },
   "form": {

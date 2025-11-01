@@ -44,6 +44,11 @@
     },
     "topCrops": {
       "title": "Top Crops"
+    },
+    "cropDistribution": {
+      "title": "Crop Distribution",
+      "description": "Number of submissions by crop type",
+      "submissions": "Submissions"
     }
   },
   "form": {
