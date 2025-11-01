@@ -10,6 +10,42 @@
     "submit": "Submit Data",
     "analytics": "View Analytics"
   },
+  "analytics": {
+    "noData": {
+      "title": "No Data Yet",
+      "desc": "Submit your first crop data to see analytics here."
+    },
+    "scopeLabel": "Analytics scope:",
+    "filters": {
+      "hide": "Hide",
+      "show": "Filters",
+      "province": "Province",
+      "district": "District",
+      "crop": "Crop",
+      "placeholders": {
+        "province": "Select province",
+        "all": "All"
+      }
+    },
+    "stats": {
+      "totalSubmissions": {
+        "title": "Total Submissions",
+        "desc": "Farmer data entries"
+      },
+      "totalHarvested": {
+        "title": "Total Harvested",
+        "valueSuffixTons": "tons",
+        "desc": "Sum of reported harvests"
+      },
+      "avgWastage": {
+        "title": "Avg. Wastage",
+        "desc": "Average crop wastage"
+      }
+    },
+    "topCrops": {
+      "title": "Top Crops"
+    }
+  },
   "form": {
     "submitTitle": "Submit Crop Data",
     "submitDescription": "Enter your farming details for regional insights",

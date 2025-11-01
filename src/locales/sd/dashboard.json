@@ -10,6 +10,42 @@
     "submit": "ڊيٽا جمع ڪريو",
     "analytics": "اينالٽڪس ڏسو"
   },
+  "analytics": {
+    "noData": {
+      "title": "ھاڻي تائين ڊيٽا ناهي",
+      "desc": "پنھنجو پھريون فصل ڊيٽا جمع ڪريو ته جيئن هتي اينالٽڪس ڏسي سگهو."
+    },
+    "scopeLabel": "اينالٽڪس جو دائرو:",
+    "filters": {
+      "hide": "لڪايو",
+      "show": "فلٽرز",
+      "province": "صوبو",
+      "district": "ضلعي",
+      "crop": "فصل",
+      "placeholders": {
+        "province": "صوبو چونڊيو",
+        "all": "سڀ"
+      }
+    },
+    "stats": {
+      "totalSubmissions": {
+        "title": "ڪل داخلائون",
+        "desc": "هارين جا ڊيٽا اندراج"
+      },
+      "totalHarvested": {
+        "title": "ڪل ڪٽايل",
+        "valueSuffixTons": "ٽن",
+        "desc": " رپورٽ ڪيل ڪٽائن جو مجموعو"
+      },
+      "avgWastage": {
+        "title": "اوسط ضايع",
+        "desc": "فصلن جو اوسط ضايع"
+      }
+    },
+    "topCrops": {
+      "title": "مٿيان فصل"
+    }
+  },
   "form": {
     "submitTitle": "فصلن جو ڊيٽا جمع ڪريو",
     "submitDescription": "علائقي جي سمجھ لاءِ پنھنجا زرعي تفصيل ڀريو",

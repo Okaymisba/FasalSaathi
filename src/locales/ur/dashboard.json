@@ -10,6 +10,42 @@
     "submit": "ڈیٹا جمع کریں",
     "analytics": "تجزیات دیکھیں"
   },
+  "analytics": {
+    "noData": {
+      "title": "ابھی تک کوئی ڈیٹا نہیں",
+      "desc": "تجزیات دیکھنے کے لیے اپنا پہلا فصل ڈیٹا جمع کریں۔"
+    },
+    "scopeLabel": "تجزیات کی حدود:",
+    "filters": {
+      "hide": "چھپائیں",
+      "show": "فلٹرز",
+      "province": "صوبہ",
+      "district": "ضلع",
+      "crop": "فصل",
+      "placeholders": {
+        "province": "صوبہ منتخب کریں",
+        "all": "سب"
+      }
+    },
+    "stats": {
+      "totalSubmissions": {
+        "title": "کل اندراجات",
+        "desc": "کا کسان ڈیٹا اندراج"
+      },
+      "totalHarvested": {
+        "title": "کل کٹائی",
+        "valueSuffixTons": "ٹن",
+        "desc": "رپورٹ کی گئی کٹائیوں کا مجموعہ"
+      },
+      "avgWastage": {
+        "title": "اوسط ضیاع",
+        "desc": "فصل کے ضیاع کی اوسط"
+      }
+    },
+    "topCrops": {
+      "title": "سب سے اوپر فصلیں"
+    }
+  },
   "form": {
     "submitTitle": "فصل کا ڈیٹا جمع کریں",
     "submitDescription": "علاقائی بصیرت کے لیے اپنے زرعی تفصیل درج کریں",
