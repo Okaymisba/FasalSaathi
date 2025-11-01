@@ -1,6 +1,6 @@
 # Agri-Scope
 
-A modern web application for agricultural monitoring and analysis in the Sindh region.
+A modern web application for agricultural monitoring and analysis in the Pakistan.
 
 ## Features
 
