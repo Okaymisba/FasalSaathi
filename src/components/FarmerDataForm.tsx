@@ -17,8 +17,8 @@ const formSchema = z.object({
     area: z.string().refine((val) => !isNaN(Number(val)) && Number(val) > 0, {
         message: "Area must be greater than 0",
     }),
-    annual_yield: z.string().refine((val) => !isNaN(Number(val)) && Number(val) >= 0, {
-        message: "Annual yield must be 0 or greater",
+    harvested_amount: z.string().refine((val) => !isNaN(Number(val)) && Number(val) >= 0, {
+        message: "Harvested amount must be 0 or greater",
     }),
     wastage: z.string().refine(
         (val) => !isNaN(Number(val)) && Number(val) >= 0 && Number(val) <= 100,
@@ -173,7 +173,7 @@ export function FarmerDataForm({onSuccess}: FarmerDataFormProps) {
                 district: profile.district,
                 crop: data.crop,
                 area: Number(data.area),
-                yield: Number(data.annual_yield),
+                yield: Number(data.harvested_amount),
                 wastage: Number(data.wastage),
                 reason: data.reason,
             } as any);
@@ -257,16 +257,16 @@ export function FarmerDataForm({onSuccess}: FarmerDataFormProps) {
                         </div>
 
                         <div className="space-y-2">
-                            <Label htmlFor="annual_yield">Estimated Annual Yield (tons/year) *</Label>
+                            <Label htmlFor="harvested_amount">Harvested Amount (tons) *</Label>
                             <Input
-                                id="annual_yield"
+                                id="harvested_amount"
                                 type="number"
                                 step="0.01"
                                 placeholder="e.g., 25.0"
-                                {...register("annual_yield")}
+                                {...register("harvested_amount")}
                             />
-                            {errors.annual_yield && (
-                                <p className="text-sm text-destructive">{errors.annual_yield.message}</p>
+                            {errors.harvested_amount && (
+                                <p className="text-sm text-destructive">{errors.harvested_amount.message}</p>
                             )}
                         </div>
 
