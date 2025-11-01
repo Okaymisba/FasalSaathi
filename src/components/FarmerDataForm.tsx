@@ -14,17 +14,17 @@ import {
 } from "@/components/ui/select";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
 import { Loader2, Sprout } from "lucide-react";
 
 const formSchema = z.object({
-  region: z.string().min(1, "Please select a region"),
   crop: z.string().min(1, "Please select a crop type"),
   area: z.string().refine((val) => !isNaN(Number(val)) && Number(val) > 0, {
     message: "Area must be greater than 0",
   }),
-  yield: z.string().refine((val) => !isNaN(Number(val)) && Number(val) >= 0, {
-    message: "Yield must be 0 or greater",
+  annual_yield: z.string().refine((val) => !isNaN(Number(val)) && Number(val) >= 0, {
+    message: "Annual yield must be 0 or greater",
   }),
   wastage: z.string().refine(
     (val) => !isNaN(Number(val)) && Number(val) >= 0 && Number(val) <= 100,
@@ -37,8 +37,7 @@ const formSchema = z.object({
 
 type FormData = z.infer<typeof formSchema>;
 
-const regions = ["Karachi", "Hyderabad", "Sukkur", "Larkana", "Mirpurkhas", "Other"];
-const crops = ["Wheat", "Rice", "Cotton", "Sugarcane", "Mango", "Banana"];
+const crops = ["Wheat", "Rice", "Cotton", "Sugarcane", "Maize", "Mango", "Banana", "Dates", "Citrus"];
 const wastageReasons = [
   "Weather",
   "Pest Attack",
@@ -53,6 +52,7 @@ interface FarmerDataFormProps {
 
 export function FarmerDataForm({ onSuccess }: FarmerDataFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const { profile, user } = useAuth();
 
   const {
     register,
@@ -66,16 +66,25 @@ export function FarmerDataForm({ onSuccess }: FarmerDataFormProps) {
   });
 
   const onSubmit = async (data: FormData) => {
+    if (!profile || !user) {
+      toast.error("Authentication required", {
+        description: "Please log in to submit data.",
+      });
+      return;
+    }
+
     setIsSubmitting(true);
     try {
       const { error } = await supabase.from("farmer_data").insert({
-        region: data.region,
+        farmer_id: user.id,
+        province: profile.province,
+        district: profile.district,
         crop: data.crop,
         area: Number(data.area),
-        yield: Number(data.yield),
+        yield: Number(data.annual_yield),
         wastage: Number(data.wastage),
         reason: data.reason,
-      });
+      } as any);
 
       if (error) throw error;
 
@@ -109,29 +118,16 @@ export function FarmerDataForm({ onSuccess }: FarmerDataFormProps) {
       </CardHeader>
       <CardContent className="pt-6">
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="space-y-2">
-              <Label htmlFor="region">Region *</Label>
-              <Select
-                onValueChange={(value) => setValue("region", value)}
-                value={watch("region")}
-              >
-                <SelectTrigger className="bg-background">
-                  <SelectValue placeholder="Select your region" />
-                </SelectTrigger>
-                <SelectContent className="bg-popover z-50">
-                  {regions.map((region) => (
-                    <SelectItem key={region} value={region}>
-                      {region}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              {errors.region && (
-                <p className="text-sm text-destructive">{errors.region.message}</p>
-              )}
+          {profile && (
+            <div className="p-4 rounded-lg bg-primary/10 border border-primary/20">
+              <p className="text-sm font-medium mb-1">Submitting for:</p>
+              <p className="text-xs text-muted-foreground">
+                {profile.province} • {profile.district}
+              </p>
             </div>
-
+          )}
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-2">
               <Label htmlFor="crop">Crop Type *</Label>
               <Select
@@ -169,16 +165,16 @@ export function FarmerDataForm({ onSuccess }: FarmerDataFormProps) {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="yield">Estimated Yield (tons) *</Label>
+              <Label htmlFor="annual_yield">Estimated Annual Yield (tons/year) *</Label>
               <Input
-                id="yield"
+                id="annual_yield"
                 type="number"
                 step="0.01"
                 placeholder="e.g., 25.0"
-                {...register("yield")}
+                {...register("annual_yield")}
               />
-              {errors.yield && (
-                <p className="text-sm text-destructive">{errors.yield.message}</p>
+              {errors.annual_yield && (
+                <p className="text-sm text-destructive">{errors.annual_yield.message}</p>
               )}
             </div>
 

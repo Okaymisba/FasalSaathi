@@ -19,7 +19,10 @@ export type Database = {
           area: number
           created_at: string
           crop: string
+          district: string | null
+          farmer_id: string | null
           id: number
+          province: string | null
           reason: string
           region: string
           wastage: number
@@ -29,7 +32,10 @@ export type Database = {
           area: number
           created_at?: string
           crop: string
+          district?: string | null
+          farmer_id?: string | null
           id?: number
+          province?: string | null
           reason: string
           region: string
           wastage: number
@@ -39,11 +45,52 @@ export type Database = {
           area?: number
           created_at?: string
           crop?: string
+          district?: string | null
+          farmer_id?: string | null
           id?: number
+          province?: string | null
           reason?: string
           region?: string
           wastage?: number
           yield?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "farmer_data_farmer_id_fkey"
+            columns: ["farmer_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          created_at: string
+          district: string
+          email: string
+          id: string
+          name: string
+          phone: string | null
+          province: string
+        }
+        Insert: {
+          created_at?: string
+          district: string
+          email: string
+          id: string
+          name: string
+          phone?: string | null
+          province: string
+        }
+        Update: {
+          created_at?: string
+          district?: string
+          email?: string
+          id?: string
+          name?: string
+          phone?: string | null
+          province?: string
         }
         Relationships: []
       }

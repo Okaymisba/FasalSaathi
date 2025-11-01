@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/useAuth";
 import { StatCard } from "./StatCard";
 import { CropDistributionChart } from "./CropDistributionChart";
 import { WastageReasonChart } from "./WastageReasonChart";
@@ -33,36 +34,42 @@ interface AnalyticsDashboardProps {
 export function AnalyticsDashboard({ refreshKey }: AnalyticsDashboardProps) {
   const [data, setData] = useState<AnalyticsData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const { profile } = useAuth();
 
   useEffect(() => {
-    fetchAnalytics();
+    if (profile) {
+      fetchAnalytics();
 
-    // Set up real-time subscription
-    const channel = supabase
-      .channel("farmer_data_changes")
-      .on(
-        "postgres_changes",
-        {
-          event: "INSERT",
-          schema: "public",
-          table: "farmer_data",
-        },
-        () => {
-          fetchAnalytics();
-        }
-      )
-      .subscribe();
+      // Set up real-time subscription
+      const channel = supabase
+        .channel("farmer_data_changes")
+        .on(
+          "postgres_changes",
+          {
+            event: "INSERT",
+            schema: "public",
+            table: "farmer_data",
+          },
+          () => {
+            fetchAnalytics();
+          }
+        )
+        .subscribe();
 
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  }, [refreshKey]);
+      return () => {
+        supabase.removeChannel(channel);
+      };
+    }
+  }, [refreshKey, profile]);
 
   const fetchAnalytics = async () => {
+    if (!profile) return;
+    
     try {
       const { data: farmerData, error } = await supabase
         .from("farmer_data")
         .select("*")
+        .eq("province", profile.province)
         .order("created_at", { ascending: false });
 
       if (error) throw error;
@@ -152,6 +159,18 @@ export function AnalyticsDashboard({ refreshKey }: AnalyticsDashboardProps) {
 
   return (
     <div className="space-y-6">
+      {profile && (
+        <Card className="bg-primary/5 border-primary/20">
+          <CardContent className="pt-6">
+            <p className="text-sm font-medium mb-1">Viewing analytics for:</p>
+            <p className="text-2xl font-bold">{profile.province}</p>
+            <p className="text-xs text-muted-foreground mt-1">
+              Data from farmers in your province
+            </p>
+          </CardContent>
+        </Card>
+      )}
+      
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <StatCard

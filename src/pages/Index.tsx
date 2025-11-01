@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { FarmerDataForm } from "@/components/FarmerDataForm";
 import { AnalyticsDashboard } from "@/components/AnalyticsDashboard";
+import { Navbar } from "@/components/Navbar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Sprout, BarChart3 } from "lucide-react";
 
@@ -10,7 +11,6 @@ const Index = () => {
 
   const handleFormSuccess = () => {
     setRefreshKey((prev) => prev + 1);
-    // Auto-switch to analytics after successful submission
     setTimeout(() => {
       setActiveTab("analytics");
     }, 1000);
@@ -18,27 +18,18 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-background via-secondary/20 to-background">
-      {/* Header */}
-      <header className="border-b bg-card/50 backdrop-blur-sm sticky top-0 z-10 shadow-sm">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center gap-3">
-            <div className="p-2 rounded-lg bg-gradient-to-br from-primary to-accent">
-              <Sprout className="h-6 w-6 text-primary-foreground" />
-            </div>
-            <div>
-              <h1 className="text-2xl md:text-3xl font-bold text-foreground">
-                AgriScope – Sindh Insights
-              </h1>
-              <p className="text-sm text-muted-foreground">
-                Real-time agricultural analytics for Sindh farmers
-              </p>
-            </div>
-          </div>
-        </div>
-      </header>
+      <Navbar />
 
-      {/* Main Content */}
       <main className="container mx-auto px-4 py-8">
+        <header className="text-center mb-8">
+          <h1 className="text-3xl md:text-4xl font-bold mb-2 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+            Welcome to Your Dashboard
+          </h1>
+          <p className="text-muted-foreground text-lg">
+            Submit crop data and view provincial analytics
+          </p>
+        </header>
+
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
           <TabsList className="grid w-full max-w-md mx-auto grid-cols-2 mb-8">
             <TabsTrigger value="submit" className="flex items-center gap-2">
@@ -62,13 +53,6 @@ const Index = () => {
           </TabsContent>
         </Tabs>
       </main>
-
-      {/* Footer */}
-      <footer className="border-t bg-card/30 backdrop-blur-sm mt-12">
-        <div className="container mx-auto px-4 py-6 text-center text-sm text-muted-foreground">
-          <p>© 2025 AgriScope. Empowering Sindh's farming community with data-driven insights.</p>
-        </div>
-      </footer>
     </div>
   );
 };
