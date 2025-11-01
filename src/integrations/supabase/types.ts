@@ -14,7 +14,39 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      farmer_data: {
+        Row: {
+          area: number
+          created_at: string
+          crop: string
+          id: number
+          reason: string
+          region: string
+          wastage: number
+          yield: number
+        }
+        Insert: {
+          area: number
+          created_at?: string
+          crop: string
+          id?: number
+          reason: string
+          region: string
+          wastage: number
+          yield: number
+        }
+        Update: {
+          area?: number
+          created_at?: string
+          crop?: string
+          id?: number
+          reason?: string
+          region?: string
+          wastage?: number
+          yield?: number
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
