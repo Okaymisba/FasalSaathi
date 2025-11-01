@@ -7,6 +7,7 @@ import {Input} from "@/components/ui/input";
 import {Label} from "@/components/ui/label";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue,} from "@/components/ui/select";
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card";
+import {Checkbox} from "@/components/ui/checkbox";
 import {supabase} from "@/integrations/supabase/client";
 import {useAuth} from "@/hooks/useAuth";
 import {toast} from "sonner";
@@ -27,6 +28,9 @@ const formSchema = z.object({
         }
     ),
     reason: z.string().min(1, "Please select a reason"),
+    attestation: z.boolean().refine((val) => val === true, {
+        message: "You must confirm the data is accurate",
+    }),
 });
 
 type FormData = z.infer<typeof formSchema>;
@@ -155,6 +159,9 @@ export function FarmerDataForm({onSuccess}: FarmerDataFormProps) {
         reset,
     } = useForm<FormData>({
         resolver: zodResolver(formSchema),
+        defaultValues: {
+            attestation: false,
+        },
     });
 
     const onSubmit = async (data: FormData) => {
@@ -307,10 +314,27 @@ export function FarmerDataForm({onSuccess}: FarmerDataFormProps) {
                         </div>
                     </div>
 
+                    <div className="space-y-2">
+                        <div className="flex items-start gap-3 p-4 rounded-lg border border-muted bg-muted/20">
+                            <Checkbox
+                                id="attestation"
+                                checked={!!watch("attestation")}
+                                onCheckedChange={(val) => setValue("attestation", !!val, {shouldValidate: true})}
+                            />
+                            <Label htmlFor="attestation" className="text-sm leading-6 font-normal">
+                                I confirm the data provided is accurate to the best of my knowledge and may be subject
+                                to verification.
+                            </Label>
+                        </div>
+                        {errors.attestation && (
+                            <p className="text-sm text-destructive">{errors.attestation.message}</p>
+                        )}
+                    </div>
+
                     <Button
                         type="submit"
                         className="w-full bg-gradient-to-r from-primary to-accent hover:opacity-90 transition-opacity"
-                        disabled={isSubmitting}
+                        disabled={isSubmitting || !watch("attestation")}
                     >
                         {isSubmitting ? (
                             <>
