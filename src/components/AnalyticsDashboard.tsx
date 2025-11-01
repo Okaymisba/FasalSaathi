@@ -254,28 +254,36 @@ export function AnalyticsDashboard({refreshKey}: AnalyticsDashboardProps) {
     return (
         <div className="space-y-6">
             {profile && (
-                <Card className="bg-primary/5 border-primary/20">
-                    <CardContent className="pt-6">
-                        <p className="text-sm font-medium mb-1">Viewing analytics for:</p>
-                        <p className="text-2xl font-bold">
-                            {selectedProvince ?? profile.province}
-                            {selectedDistrict && selectedDistrict !== "All" ? ` • ${selectedDistrict}` : ""}
-                            {selectedCrop && selectedCrop !== "All" ? ` • ${selectedCrop}` : ""}
-                        </p>
-                        <p className="text-xs text-muted-foreground mt-1">
-                            Adjust filters below to explore other provinces, districts, and crops
-                        </p>
-                    </CardContent>
-                </Card>
+                <div
+                    className="flex items-center justify-between rounded-md border border-border/60 bg-muted/30 px-3 py-2">
+                    <div className="flex items-center gap-2 min-w-0">
+                        <span className="text-xs text-muted-foreground shrink-0">Analytics scope:</span>
+                        <div className="flex items-center gap-1 text-sm font-medium text-foreground truncate">
+                            <span
+                                className="inline-flex items-center rounded-full bg-primary/10 px-2 py-0.5 text-primary text-xs truncate max-w-[40vw]">
+                                {selectedProvince ?? profile.province}
+                            </span>
+                            {selectedDistrict && selectedDistrict !== "All" && (
+                                <span
+                                    className="inline-flex items-center rounded-full bg-accent/10 px-2 py-0.5 text-foreground text-xs truncate max-w-[30vw]">
+                                    {selectedDistrict}
+                                </span>
+                            )}
+                            {selectedCrop && selectedCrop !== "All" && (
+                                <span
+                                    className="inline-flex items-center rounded-full bg-secondary/20 px-2 py-0.5 text-foreground text-xs truncate max-w-[30vw]">
+                                    {selectedCrop}
+                                </span>
+                            )}
+                        </div>
+                    </div>
+                    <Button variant="outline" size="sm" className="gap-2" onClick={() => setShowFilters((v) => !v)}>
+                        <SlidersHorizontal
+                            className={`h-4 w-4 transition-transform duration-300 ${showFilters ? "rotate-90" : "rotate-0"}`}/>
+                        {showFilters ? "Hide" : "Filters"}
+                    </Button>
+                </div>
             )}
-            {/* Filters */}
-            <div className="flex justify-end">
-                <Button variant="outline" className="gap-2" onClick={() => setShowFilters((v) => !v)}>
-                    <SlidersHorizontal
-                        className={`h-4 w-4 transition-transform duration-300 ${showFilters ? "rotate-90" : "rotate-0"}`}/>
-                    {showFilters ? "Hide Filters" : "Show Filters"}
-                </Button>
-            </div>
             <div
                 className="transition-all duration-300 ease-out overflow-hidden"
                 style={{
