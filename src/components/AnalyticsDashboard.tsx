@@ -6,6 +6,8 @@ import {CropDistributionChart} from "./CropDistributionChart";
 import {WastageReasonChart} from "./WastageReasonChart";
 import {AlertTriangle, Database, Loader2, Sprout, TrendingUp} from "lucide-react";
 import {Card, CardContent} from "@/components/ui/card";
+import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
+import {Label} from "@/components/ui/label";
 
 interface FarmerData {
     id: number;
@@ -35,9 +37,19 @@ export function AnalyticsDashboard({refreshKey}: AnalyticsDashboardProps) {
     const [data, setData] = useState<AnalyticsData | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const {profile} = useAuth();
+    const [provinces, setProvinces] = useState<string[]>([]);
+    const [districts, setDistricts] = useState<string[]>([]);
+    const [crops, setCrops] = useState<string[]>([]);
+
+    const [selectedProvince, setSelectedProvince] = useState<string | null>(null);
+    const [selectedDistrict, setSelectedDistrict] = useState<string>("All");
+    const [selectedCrop, setSelectedCrop] = useState<string>("All");
 
     useEffect(() => {
         if (profile) {
+            // initialize selected province from profile once profile is ready
+            setSelectedProvince((prev) => prev ?? profile.province);
+            fetchFilterOptions();
             fetchAnalytics();
 
             // Set up real-time subscription
@@ -51,6 +63,7 @@ export function AnalyticsDashboard({refreshKey}: AnalyticsDashboardProps) {
                         table: "farmer_data",
                     },
                     () => {
+                        fetchFilterOptions();
                         fetchAnalytics();
                     }
                 )
@@ -62,15 +75,93 @@ export function AnalyticsDashboard({refreshKey}: AnalyticsDashboardProps) {
         }
     }, [refreshKey, profile]);
 
+    // refetch analytics whenever filters change
+    useEffect(() => {
+        if (profile) {
+            fetchAnalytics();
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [selectedProvince, selectedDistrict, selectedCrop]);
+
+    // when province changes, refresh district options
+    useEffect(() => {
+        if (!selectedProvince) return;
+        fetchDistrictOptions(selectedProvince);
+        // reset district selection to All when province changes
+        setSelectedDistrict("All");
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [selectedProvince]);
+
+    const fetchFilterOptions = async () => {
+        try {
+            // fetch minimal columns and dedupe client-side
+            const {data: rows, error} = await supabase
+                .from("farmer_data")
+                .select("province,district,crop");
+            if (error) throw error;
+
+            const provSet = new Set<string>();
+            const distSet = new Set<string>();
+            const cropSet = new Set<string>();
+            rows?.forEach((r: any) => {
+                if (r.province) provSet.add(r.province);
+                if (r.district) distSet.add(r.district);
+                if (r.crop) cropSet.add(r.crop);
+            });
+            const provArr = Array.from(provSet).sort();
+            setProvinces(provArr);
+            setCrops(Array.from(cropSet).sort());
+
+            // initialize districts based on selected or profile province
+            const baseProvince = selectedProvince ?? profile?.province ?? null;
+            if (baseProvince) {
+                const distForProvince = rows
+                    ?.filter((r: any) => r.province === baseProvince && r.district)
+                    .map((r: any) => r.district as string);
+                setDistricts(Array.from(new Set(distForProvince)).sort());
+            } else {
+                setDistricts(Array.from(distSet).sort());
+            }
+        } catch (e) {
+            console.error("Error fetching filter options:", e);
+        }
+    };
+
+    const fetchDistrictOptions = async (province: string) => {
+        try {
+            const {data: rows, error} = await supabase
+                .from("farmer_data")
+                .select("district,province")
+                .eq("province", province);
+            if (error) throw error;
+            const dists = Array.from(new Set((rows || []).map((r: any) => r.district).filter(Boolean))).sort();
+            setDistricts(dists);
+        } catch (e) {
+            console.error("Error fetching district options:", e);
+        }
+    };
+
     const fetchAnalytics = async () => {
         if (!profile) return;
 
         try {
-            const {data: farmerData, error} = await supabase
+            let query = supabase
                 .from("farmer_data")
                 .select("*")
-                .eq("province", profile.province)
                 .order("created_at", {ascending: false});
+
+            const provinceToUse = selectedProvince ?? profile.province;
+            if (provinceToUse) {
+                query = query.eq("province", provinceToUse);
+            }
+            if (selectedDistrict && selectedDistrict !== "All") {
+                query = query.eq("district", selectedDistrict);
+            }
+            if (selectedCrop && selectedCrop !== "All") {
+                query = query.eq("crop", selectedCrop);
+            }
+
+            const {data: farmerData, error} = await query;
 
             if (error) throw error;
 
@@ -163,13 +254,77 @@ export function AnalyticsDashboard({refreshKey}: AnalyticsDashboardProps) {
                 <Card className="bg-primary/5 border-primary/20">
                     <CardContent className="pt-6">
                         <p className="text-sm font-medium mb-1">Viewing analytics for:</p>
-                        <p className="text-2xl font-bold">{profile.province}</p>
+                        <p className="text-2xl font-bold">
+                            {selectedProvince ?? profile.province}
+                            {selectedDistrict && selectedDistrict !== "All" ? ` • ${selectedDistrict}` : ""}
+                            {selectedCrop && selectedCrop !== "All" ? ` • ${selectedCrop}` : ""}
+                        </p>
                         <p className="text-xs text-muted-foreground mt-1">
-                            Data from farmers in your province
+                            Adjust filters below to explore other provinces, districts, and crops
                         </p>
                     </CardContent>
                 </Card>
             )}
+
+            {/* Filters */}
+            <Card className="shadow-[var(--shadow-card)] border-border/50">
+                <CardContent className="pt-6">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div className="space-y-2">
+                            <Label>Province</Label>
+                            <Select
+                                value={(selectedProvince ?? "") || ""}
+                                onValueChange={(v) => setSelectedProvince(v)}
+                            >
+                                <SelectTrigger className="bg-background">
+                                    <SelectValue placeholder="Select province"/>
+                                </SelectTrigger>
+                                <SelectContent className="bg-popover z-50">
+                                    {provinces.map((p) => (
+                                        <SelectItem key={p} value={p}>{p}</SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                        </div>
+
+                        <div className="space-y-2">
+                            <Label>District</Label>
+                            <Select
+                                value={selectedDistrict}
+                                onValueChange={(v) => setSelectedDistrict(v)}
+                            >
+                                <SelectTrigger className="bg-background">
+                                    <SelectValue placeholder="All"/>
+                                </SelectTrigger>
+                                <SelectContent className="bg-popover z-50">
+                                    <SelectItem value="All">All</SelectItem>
+                                    {districts.map((d) => (
+                                        <SelectItem key={d} value={d}>{d}</SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                        </div>
+
+                        <div className="space-y-2">
+                            <Label>Crop</Label>
+                            <Select
+                                value={selectedCrop}
+                                onValueChange={(v) => setSelectedCrop(v)}
+                            >
+                                <SelectTrigger className="bg-background">
+                                    <SelectValue placeholder="All"/>
+                                </SelectTrigger>
+                                <SelectContent className="bg-popover z-50">
+                                    <SelectItem value="All">All</SelectItem>
+                                    {crops.map((c) => (
+                                        <SelectItem key={c} value={c}>{c}</SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                        </div>
+                    </div>
+                </CardContent>
+            </Card>
 
             {/* Stats Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -220,3 +375,4 @@ export function AnalyticsDashboard({refreshKey}: AnalyticsDashboardProps) {
         </div>
     );
 }
+
