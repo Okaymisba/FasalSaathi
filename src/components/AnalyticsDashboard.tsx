@@ -1,13 +1,14 @@
-import {useEffect, useState} from "react";
+import {useEffect, useRef, useState} from "react";
 import {supabase} from "@/integrations/supabase/client";
 import {useAuth} from "@/hooks/useAuth";
 import {StatCard} from "./StatCard";
 import {CropDistributionChart} from "./CropDistributionChart";
 import {WastageReasonChart} from "./WastageReasonChart";
-import {AlertTriangle, Database, Loader2, Sprout, TrendingUp} from "lucide-react";
+import {AlertTriangle, Database, Loader2, SlidersHorizontal, Sprout, TrendingUp} from "lucide-react";
 import {Card, CardContent} from "@/components/ui/card";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
 import {Label} from "@/components/ui/label";
+import {Button} from "@/components/ui/button";
 
 interface FarmerData {
     id: number;
@@ -44,6 +45,8 @@ export function AnalyticsDashboard({refreshKey}: AnalyticsDashboardProps) {
     const [selectedProvince, setSelectedProvince] = useState<string | null>(null);
     const [selectedDistrict, setSelectedDistrict] = useState<string>("All");
     const [selectedCrop, setSelectedCrop] = useState<string>("All");
+    const [showFilters, setShowFilters] = useState<boolean>(false);
+    const filtersContentRef = useRef<HTMLDivElement | null>(null);
 
     useEffect(() => {
         if (profile) {
@@ -265,66 +268,82 @@ export function AnalyticsDashboard({refreshKey}: AnalyticsDashboardProps) {
                     </CardContent>
                 </Card>
             )}
-
             {/* Filters */}
-            <Card className="shadow-[var(--shadow-card)] border-border/50">
-                <CardContent className="pt-6">
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <div className="space-y-2">
-                            <Label>Province</Label>
-                            <Select
-                                value={(selectedProvince ?? "") || ""}
-                                onValueChange={(v) => setSelectedProvince(v)}
-                            >
-                                <SelectTrigger className="bg-background">
-                                    <SelectValue placeholder="Select province"/>
-                                </SelectTrigger>
-                                <SelectContent className="bg-popover z-50">
-                                    {provinces.map((p) => (
-                                        <SelectItem key={p} value={p}>{p}</SelectItem>
-                                    ))}
-                                </SelectContent>
-                            </Select>
-                        </div>
+            <div className="flex justify-end">
+                <Button variant="outline" className="gap-2" onClick={() => setShowFilters((v) => !v)}>
+                    <SlidersHorizontal
+                        className={`h-4 w-4 transition-transform duration-300 ${showFilters ? "rotate-90" : "rotate-0"}`}/>
+                    {showFilters ? "Hide Filters" : "Show Filters"}
+                </Button>
+            </div>
+            <div
+                className="transition-all duration-300 ease-out overflow-hidden"
+                style={{
+                    maxHeight: showFilters ? (filtersContentRef.current?.scrollHeight || 0) : 0,
+                    opacity: showFilters ? 1 : 0,
+                    transform: showFilters ? "translateY(0)" : "translateY(-6px)",
+                }}
+                aria-hidden={!showFilters}
+            >
+                <Card className="shadow-[var(--shadow-card)] border-border/50">
+                    <CardContent className="pt-6" ref={filtersContentRef}>
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div className="space-y-2">
+                                <Label>Province</Label>
+                                <Select
+                                    value={selectedProvince ?? ""}
+                                    onValueChange={(v) => setSelectedProvince(v)}
+                                >
+                                    <SelectTrigger className="bg-background">
+                                        <SelectValue placeholder="Select province"/>
+                                    </SelectTrigger>
+                                    <SelectContent className="bg-popover z-50">
+                                        {provinces.map((p) => (
+                                            <SelectItem key={p} value={p}>{p}</SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+                            </div>
 
-                        <div className="space-y-2">
-                            <Label>District</Label>
-                            <Select
-                                value={selectedDistrict}
-                                onValueChange={(v) => setSelectedDistrict(v)}
-                            >
-                                <SelectTrigger className="bg-background">
-                                    <SelectValue placeholder="All"/>
-                                </SelectTrigger>
-                                <SelectContent className="bg-popover z-50">
-                                    <SelectItem value="All">All</SelectItem>
-                                    {districts.map((d) => (
-                                        <SelectItem key={d} value={d}>{d}</SelectItem>
-                                    ))}
-                                </SelectContent>
-                            </Select>
-                        </div>
+                            <div className="space-y-2">
+                                <Label>District</Label>
+                                <Select
+                                    value={selectedDistrict}
+                                    onValueChange={(v) => setSelectedDistrict(v)}
+                                >
+                                    <SelectTrigger className="bg-background">
+                                        <SelectValue placeholder="All"/>
+                                    </SelectTrigger>
+                                    <SelectContent className="bg-popover z-50">
+                                        <SelectItem value="All">All</SelectItem>
+                                        {districts.map((d) => (
+                                            <SelectItem key={d} value={d}>{d}</SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+                            </div>
 
-                        <div className="space-y-2">
-                            <Label>Crop</Label>
-                            <Select
-                                value={selectedCrop}
-                                onValueChange={(v) => setSelectedCrop(v)}
-                            >
-                                <SelectTrigger className="bg-background">
-                                    <SelectValue placeholder="All"/>
-                                </SelectTrigger>
-                                <SelectContent className="bg-popover z-50">
-                                    <SelectItem value="All">All</SelectItem>
-                                    {crops.map((c) => (
-                                        <SelectItem key={c} value={c}>{c}</SelectItem>
-                                    ))}
-                                </SelectContent>
-                            </Select>
+                            <div className="space-y-2">
+                                <Label>Crop</Label>
+                                <Select
+                                    value={selectedCrop}
+                                    onValueChange={(v) => setSelectedCrop(v)}
+                                >
+                                    <SelectTrigger className="bg-background">
+                                        <SelectValue placeholder="All"/>
+                                    </SelectTrigger>
+                                    <SelectContent className="bg-popover z-50">
+                                        <SelectItem value="All">All</SelectItem>
+                                        {crops.map((c) => (
+                                            <SelectItem key={c} value={c}>{c}</SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+                            </div>
                         </div>
-                    </div>
-                </CardContent>
-            </Card>
+                    </CardContent>
+                </Card>
+            </div>
 
             {/* Stats Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
