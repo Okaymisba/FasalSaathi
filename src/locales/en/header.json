@@ -1,0 +1,17 @@
+{
+  "appName": "Agri Scope",
+  "tagline": "Pakistan Crop Insights",
+  "logout": "Logout",
+  "loggedOutSuccess": "Logged out successfully",
+  "language": "Language",
+  "languages": {
+    "en": "English",
+    "ur": "Urdu",
+    "sd": "Sindhi"
+  },
+  "nav": {
+    "home": "Home",
+    "dashboard": "Dashboard",
+    "farmers": "Farmers"
+  }
+}

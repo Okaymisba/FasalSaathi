@@ -1,0 +1,7 @@
+{
+  "title": "Dashboard",
+  "filters": {
+    "date": "Date",
+    "region": "Region"
+  }
+}
