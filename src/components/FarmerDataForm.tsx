@@ -12,28 +12,16 @@ import {supabase} from "@/integrations/supabase/client";
 import {useAuth} from "@/hooks/useAuth";
 import {toast} from "sonner";
 import {Loader2, Sprout} from "lucide-react";
+import {useTranslation} from "react-i18next";
 
-const formSchema = z.object({
-    crop: z.string().min(1, "Please select a crop type"),
-    area: z.string().refine((val) => !isNaN(Number(val)) && Number(val) > 0, {
-        message: "Area must be greater than 0",
-    }),
-    harvested_amount: z.string().refine((val) => !isNaN(Number(val)) && Number(val) >= 0, {
-        message: "Harvested amount must be 0 or greater",
-    }),
-    wastage: z.string().refine(
-        (val) => !isNaN(Number(val)) && Number(val) >= 0 && Number(val) <= 100,
-        {
-            message: "Wastage must be between 0 and 100",
-        }
-    ),
-    reason: z.string().min(1, "Please select a reason"),
-    attestation: z.boolean().refine((val) => val === true, {
-        message: "You must confirm the data is accurate",
-    }),
-});
-
-type FormData = z.infer<typeof formSchema>;
+type FormData = {
+    crop: string;
+    area: string;
+    harvested_amount: string;
+    wastage: string;
+    reason: string;
+    attestation: boolean;
+};
 
 const crops = [
     // Cereals & staples
@@ -152,6 +140,30 @@ export function FarmerDataForm({onSuccess}: FarmerDataFormProps) {
     const [showIntro, setShowIntro] = useState(true);
     const [isForward, setIsForward] = useState(true);
     const {profile, user} = useAuth();
+    const {t} = useTranslation("dashboard");
+
+    // Build validation schema with translated messages
+    const formSchema = z.object({
+        crop: z.string().min(1, t("form.validation.cropRequired")),
+        area: z.string().refine((val) => !isNaN(Number(val)) && Number(val) > 0, {
+            message: t("form.validation.areaPositive"),
+        }),
+        harvested_amount: z
+            .string()
+            .refine((val) => !isNaN(Number(val)) && Number(val) >= 0, {
+                message: t("form.validation.harvestedNonNegative"),
+            }),
+        wastage: z
+            .string()
+            .refine(
+                (val) => !isNaN(Number(val)) && Number(val) >= 0 && Number(val) <= 100,
+                {message: t("form.validation.wastageRange")}
+            ),
+        reason: z.string().min(1, t("form.validation.reasonRequired")),
+        attestation: z.boolean().refine((val) => val === true, {
+            message: t("form.validation.attestationConfirm"),
+        }),
+    });
 
     const {
         register,
@@ -175,39 +187,33 @@ export function FarmerDataForm({onSuccess}: FarmerDataFormProps) {
     }> = [
         {
             key: "crop",
-            title: "Crop Type",
-            description:
-                "Select the crop you grew this season. This helps us compare production across your district.",
+            title: t("form.steps.crop.title"),
+            description: t("form.steps.crop.description"),
         },
         {
             key: "area",
-            title: "Area Cultivated (acres)",
-            description:
-                "Enter total land used for this crop in acres. Use decimals if needed, e.g., 10.5.",
+            title: t("form.steps.area.title"),
+            description: t("form.steps.area.description"),
         },
         {
             key: "harvested_amount",
-            title: "Harvested Amount (tons)",
-            description:
-                "Total quantity harvested in metric tons. If not harvested yet, enter 0.",
+            title: t("form.steps.harvested_amount.title"),
+            description: t("form.steps.harvested_amount.description"),
         },
         {
             key: "wastage",
-            title: "Wastage (%)",
-            description:
-                "Approximate percentage of the harvest lost or wasted (0 to 100).",
+            title: t("form.steps.wastage.title"),
+            description: t("form.steps.wastage.description"),
         },
         {
             key: "reason",
-            title: "Reason for Wastage",
-            description:
-                "Choose the main reason for wastage. This helps identify support needs.",
+            title: t("form.steps.reason.title"),
+            description: t("form.steps.reason.description"),
         },
         {
             key: "attestation",
-            title: "Confirm Accuracy",
-            description:
-                "Please confirm the information you provided is correct to the best of your knowledge.",
+            title: t("form.steps.attestation.title"),
+            description: t("form.steps.attestation.description"),
         },
     ];
 
@@ -232,8 +238,8 @@ export function FarmerDataForm({onSuccess}: FarmerDataFormProps) {
 
     const onSubmit = async (data: FormData) => {
         if (!profile || !user) {
-            toast.error("Authentication required", {
-                description: "Please log in to submit data.",
+            toast.error(t("form.toasts.authRequired.title"), {
+                description: t("form.toasts.authRequired.desc"),
             });
             return;
         }
@@ -253,15 +259,15 @@ export function FarmerDataForm({onSuccess}: FarmerDataFormProps) {
 
             if (error) throw error;
 
-            toast.success("Data submitted successfully!", {
-                description: "Your crop data has been recorded.",
+            toast.success(t("form.toasts.submitSuccess.title"), {
+                description: t("form.toasts.submitSuccess.desc"),
             });
             reset();
             onSuccess();
         } catch (error) {
             console.error("Error submitting data:", error);
-            toast.error("Failed to submit data", {
-                description: "Please try again later.",
+            toast.error(t("form.toasts.submitError.title"), {
+                description: t("form.toasts.submitError.desc"),
             });
         } finally {
             setIsSubmitting(false);
@@ -276,8 +282,8 @@ export function FarmerDataForm({onSuccess}: FarmerDataFormProps) {
                         <Sprout className="h-6 w-6 text-primary"/>
                     </div>
                     <div>
-                        <CardTitle className="text-2xl">Submit Crop Data</CardTitle>
-                        <CardDescription>Enter your farming details for regional insights</CardDescription>
+                        <CardTitle className="text-2xl">{t("form.submitTitle")}</CardTitle>
+                        <CardDescription>{t("form.submitDescription")}</CardDescription>
                     </div>
                 </div>
             </CardHeader>
@@ -285,7 +291,7 @@ export function FarmerDataForm({onSuccess}: FarmerDataFormProps) {
                 <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
                     {profile && (
                         <div className="p-4 rounded-lg bg-primary/10 border border-primary/20">
-                            <p className="text-sm font-medium mb-1">Submitting for:</p>
+                            <p className="text-sm font-medium mb-1">{t("form.submittingFor")}</p>
                             <p className="text-xs text-muted-foreground">
                                 {profile.province} • {profile.district}
                             </p>
@@ -295,21 +301,20 @@ export function FarmerDataForm({onSuccess}: FarmerDataFormProps) {
                     {showIntro ? (
                         <div className="space-y-4 animate-in fade-in slide-in-from-bottom-2">
                             <div className="rounded-lg border p-4 bg-muted/20">
-                                <h3 className="font-semibold mb-1">Getting started</h3>
+                                <h3 className="font-semibold mb-1">{t("form.intro.title")}</h3>
                                 <p className="text-sm text-muted-foreground">
-                                    This simple form will guide you step-by-step. You will fill one detail at a time.
-                                    It takes about a minute.
+                                    {t("form.intro.body")}
                                 </p>
                                 <ul className="list-disc pl-5 mt-3 text-sm text-muted-foreground space-y-1">
-                                    <li>Crop you grew</li>
-                                    <li>Area of land (in acres)</li>
-                                    <li>Harvested amount (in tons)</li>
-                                    <li>Wastage percentage</li>
-                                    <li>Main reason for wastage</li>
-                                    <li>Confirmation that details are correct</li>
+                                    <li>{t("form.intro.items.crop")}</li>
+                                    <li>{t("form.intro.items.area")}</li>
+                                    <li>{t("form.intro.items.harvested")}</li>
+                                    <li>{t("form.intro.items.wastage")}</li>
+                                    <li>{t("form.intro.items.reason")}</li>
+                                    <li>{t("form.intro.items.confirm")}</li>
                                 </ul>
                                 <p className="text-xs text-muted-foreground mt-3">
-                                    You can move back and forward anytime. Your district will be filled automatically.
+                                    {t("form.intro.note")}
                                 </p>
                             </div>
 
@@ -319,7 +324,7 @@ export function FarmerDataForm({onSuccess}: FarmerDataFormProps) {
                                     className="bg-gradient-to-r from-primary to-accent hover:opacity-90 transition-opacity"
                                     onClick={() => setShowIntro(false)}
                                 >
-                                    Start
+                                    {t("form.intro.start")}
                                 </Button>
                             </div>
                         </div>
@@ -329,7 +334,7 @@ export function FarmerDataForm({onSuccess}: FarmerDataFormProps) {
                             <div className="space-y-2">
                                 <div className="flex items-center justify-between text-xs text-muted-foreground">
                                     <span>
-                                        Step {currentStep + 1} of {totalSteps}
+                                        {t("form.progress.stepOf", {current: currentStep + 1, total: totalSteps})}
                                     </span>
                                     <span>{steps[currentStep].title}</span>
                                 </div>
@@ -353,14 +358,14 @@ export function FarmerDataForm({onSuccess}: FarmerDataFormProps) {
                                     <div className="animate-item mb-6 md:mb-8">
                                         {steps[currentStep].key === "crop" && (
                                             <div className="space-y-2">
-                                                <Label htmlFor="crop">Crop Type *</Label>
+                                                <Label htmlFor="crop">{t("form.labels.crop")}</Label>
                                                 <p className="text-xs text-muted-foreground">{steps[currentStep].description}</p>
                                                 <Select
                                                     onValueChange={(value) => setValue("crop", value, {shouldValidate: true})}
                                                     value={watch("crop")}
                                                 >
                                                     <SelectTrigger className="bg-background">
-                                                        <SelectValue placeholder="Select crop type"/>
+                                                        <SelectValue placeholder={t("form.placeholders.crop")}/>
                                                     </SelectTrigger>
                                                     <SelectContent className="bg-popover z-50">
                                                         {crops.map((crop) => (
@@ -378,13 +383,13 @@ export function FarmerDataForm({onSuccess}: FarmerDataFormProps) {
 
                                         {steps[currentStep].key === "area" && (
                                             <div className="space-y-2">
-                                                <Label htmlFor="area">Area Cultivated (acres) *</Label>
+                                                <Label htmlFor="area">{t("form.labels.area")}</Label>
                                                 <p className="text-xs text-muted-foreground">{steps[currentStep].description}</p>
                                                 <Input
                                                     id="area"
                                                     type="number"
                                                     step="0.01"
-                                                    placeholder="e.g., 10.5"
+                                                    placeholder={t("form.placeholders.area")}
                                                     {...register("area")}
                                                 />
                                                 {errors.area && (
@@ -395,13 +400,14 @@ export function FarmerDataForm({onSuccess}: FarmerDataFormProps) {
 
                                         {steps[currentStep].key === "harvested_amount" && (
                                             <div className="space-y-2">
-                                                <Label htmlFor="harvested_amount">Harvested Amount (tons) *</Label>
+                                                <Label
+                                                    htmlFor="harvested_amount">{t("form.labels.harvested_amount")}</Label>
                                                 <p className="text-xs text-muted-foreground">{steps[currentStep].description}</p>
                                                 <Input
                                                     id="harvested_amount"
                                                     type="number"
                                                     step="0.01"
-                                                    placeholder="e.g., 25.0"
+                                                    placeholder={t("form.placeholders.harvested_amount")}
                                                     {...register("harvested_amount")}
                                                 />
                                                 {errors.harvested_amount && (
@@ -412,13 +418,13 @@ export function FarmerDataForm({onSuccess}: FarmerDataFormProps) {
 
                                         {steps[currentStep].key === "wastage" && (
                                             <div className="space-y-2">
-                                                <Label htmlFor="wastage">Wastage (%) *</Label>
+                                                <Label htmlFor="wastage">{t("form.labels.wastage")}</Label>
                                                 <p className="text-xs text-muted-foreground">{steps[currentStep].description}</p>
                                                 <Input
                                                     id="wastage"
                                                     type="number"
                                                     step="0.1"
-                                                    placeholder="e.g., 5.0"
+                                                    placeholder={t("form.placeholders.wastage")}
                                                     {...register("wastage")}
                                                 />
                                                 {errors.wastage && (
@@ -429,21 +435,29 @@ export function FarmerDataForm({onSuccess}: FarmerDataFormProps) {
 
                                         {steps[currentStep].key === "reason" && (
                                             <div className="space-y-2">
-                                                <Label htmlFor="reason">Reason for Wastage *</Label>
+                                                <Label htmlFor="reason">{t("form.labels.reason")}</Label>
                                                 <p className="text-xs text-muted-foreground">{steps[currentStep].description}</p>
                                                 <Select
                                                     onValueChange={(value) => setValue("reason", value, {shouldValidate: true})}
                                                     value={watch("reason")}
                                                 >
                                                     <SelectTrigger className="bg-background">
-                                                        <SelectValue placeholder="Select reason"/>
+                                                        <SelectValue placeholder={t("form.placeholders.reason")}/>
                                                     </SelectTrigger>
                                                     <SelectContent className="bg-popover z-50">
-                                                        {wastageReasons.map((reason) => (
-                                                            <SelectItem key={reason} value={reason}>
-                                                                {reason}
-                                                            </SelectItem>
-                                                        ))}
+                                                        {wastageReasons.map((reason) => {
+                                                            const key =
+                                                                reason === "Weather" ? "weather" :
+                                                                    reason === "Pest Attack" ? "pest" :
+                                                                        reason === "Transport" ? "transport" :
+                                                                            reason === "Overproduction" ? "overproduction" :
+                                                                                "other";
+                                                            return (
+                                                                <SelectItem key={reason} value={reason}>
+                                                                    {t(`form.reasons.${key}`)}
+                                                                </SelectItem>
+                                                            );
+                                                        })}
                                                     </SelectContent>
                                                 </Select>
                                                 {errors.reason && (
@@ -454,7 +468,7 @@ export function FarmerDataForm({onSuccess}: FarmerDataFormProps) {
 
                                         {steps[currentStep].key === "attestation" && (
                                             <div className="space-y-2">
-                                                <Label htmlFor="attestation">Confirm Accuracy *</Label>
+                                                <Label htmlFor="attestation">{t("form.labels.attestation")}</Label>
                                                 <p className="text-xs text-muted-foreground">{steps[currentStep].description}</p>
                                                 <div
                                                     className="flex items-start gap-3 p-4 rounded-lg border border-muted bg-muted/20">
@@ -464,7 +478,7 @@ export function FarmerDataForm({onSuccess}: FarmerDataFormProps) {
                                                         onCheckedChange={(val) => setValue("attestation", !!val, {shouldValidate: true})}
                                                     />
                                                     <span className="text-sm leading-6">
-                                        I confirm the data provided is accurate to the best of my knowledge and may be subject to verification.
+                                        {t("form.attestation.text")}
                                     </span>
                                                 </div>
                                                 {errors.attestation && (
@@ -483,7 +497,7 @@ export function FarmerDataForm({onSuccess}: FarmerDataFormProps) {
                                             onClick={goBack}
                                             disabled={showIntro || isSubmitting}
                                         >
-                                            Back
+                                            {t("form.buttons.back")}
                                         </Button>
 
                                         {currentStep < totalSteps - 1 ? (
@@ -493,7 +507,7 @@ export function FarmerDataForm({onSuccess}: FarmerDataFormProps) {
                                                 onClick={goNext}
                                                 disabled={isSubmitting || showIntro}
                                             >
-                                                Next
+                                                {t("form.buttons.next")}
                                             </Button>
                                         ) : (
                                             <Button
@@ -504,10 +518,10 @@ export function FarmerDataForm({onSuccess}: FarmerDataFormProps) {
                                                 {isSubmitting ? (
                                                     <>
                                                         <Loader2 className="mr-2 h-4 w-4 animate-spin"/>
-                                                        Submitting...
+                                                        {t("form.buttons.submitting")}
                                                     </>
                                                 ) : (
-                                                    "Submit Data"
+                                                    t("form.buttons.submit")
                                                 )}
                                             </Button>
                                         )}
