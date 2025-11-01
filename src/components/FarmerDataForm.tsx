@@ -23,112 +23,40 @@ type FormData = {
     attestation: boolean;
 };
 
-const crops = [
-    // Cereals & staples
-    "Wheat",
-    "Rice",
-    "Maize",
-    "Barley",
-    "Sorghum",
-    "Millet (Bajra)",
-    "Oats",
+// Crop keys that match the translation keys
+const cropKeys = [
+    'wheat', 'rice', 'maize', 'barley', 'sorghum', 'millet', 'oats',
+    'cotton', 'sugarcane', 'tobacco', 'jute', 'kenaf',
+    'chickpea', 'lentil', 'mungBean', 'blackGram', 'peas', 'cowpea', 'pigeonPea',
+    'rapeseedMustard', 'mustard', 'canola', 'sunflower', 'sesame', 'groundnut', 'soybean', 'safflower', 'castor',
+    'berseem', 'lucerne', 'sorghumSudanGrass', 'guineaGrass', 'maizeFodder',
+    'potato', 'onion', 'tomato', 'chili', 'okra', 'cauliflower', 'cabbage', 'brinjal', 'garlic', 'ginger',
+    'spinach', 'coriander', 'cucumber', 'carrot', 'radish', 'turnip', 'pumpkin', 'bitterGourd', 'bottleGourd',
+    'tinda', 'peasVegetable', 'mango', 'citrus', 'banana', 'dates', 'guava', 'apple', 'apricot', 'peach',
+    'plum', 'pear', 'pomegranate', 'grapes', 'watermelon', 'muskmelon', 'strawberry', 'turmeric', 'cumin',
+    'fennel', 'fenugreek', 'blackPepper', 'cardamom', 'nigella', 'quinoa', 'buckwheat', 'flax', 'teff'
+] as const;
 
-    // Cash & industrial crops
-    "Cotton",
-    "Sugarcane",
-    "Tobacco",
-    "Jute",
-    "Kenaf",
+type CropKey = typeof cropKeys[number];
 
-    // Pulses/legumes
-    "Chickpea (Gram)",
-    "Lentil (Masoor)",
-    "Mung Bean",
-    "Urd/Black Gram",
-    "Peas",
-    "Cowpea",
-    "Pigeon Pea (Arhar)",
+// Wastage reason keys that match the translation keys
+const wastageReasonKeys = ['weather', 'pestAttack', 'transport', 'overproduction', 'other'] as const;
+type WastageReasonKey = typeof wastageReasonKeys[number];
 
-    // Oilseeds
-    "Rapeseed-Mustard (Canola)",
-    "Mustard",
-    "Canola",
-    "Sunflower",
-    "Sesame (Till)",
-    "Groundnut (Peanut)",
-    "Soybean",
-    "Safflower",
-    "Castor",
+// Helper functions to get translated values
+const getTranslatedCrops = (t: any) => {
+    return cropKeys.map(key => ({
+        key,
+        label: t(`crops.${key}`)
+    }));
+};
 
-    // Fodder & forage
-    "Berseem",
-    "Lucerne (Alfalfa)",
-    "Sorghum-Sudan Grass",
-    "Guinea Grass",
-    "Maize (Fodder)",
-
-    // Vegetables
-    "Potato",
-    "Onion",
-    "Tomato",
-    "Chili (Red/Green)",
-    "Okra (Bhindi)",
-    "Cauliflower",
-    "Cabbage",
-    "Brinjal (Eggplant)",
-    "Garlic",
-    "Ginger",
-    "Spinach",
-    "Coriander (Dhania)",
-    "Cucumber",
-    "Carrot",
-    "Radish",
-    "Turnip",
-    "Pumpkin",
-    "Bitter Gourd",
-    "Bottle Gourd",
-    "Tinda",
-    "Peas (Vegetable)",
-
-    // Fruits
-    "Mango",
-    "Citrus (Kinnow/Orange/Lemon)",
-    "Banana",
-    "Dates",
-    "Guava",
-    "Apple",
-    "Apricot",
-    "Peach",
-    "Plum",
-    "Pear",
-    "Pomegranate",
-    "Grapes",
-    "Watermelon",
-    "Muskmelon/Cantaloupe",
-    "Strawberry",
-
-    // Spices & condiments
-    "Turmeric",
-    "Cumin",
-    "Fennel",
-    "Fenugreek",
-    "Black Pepper",
-    "Cardamom",
-    "Nigella (Kalonji)",
-
-    // Other niche/regionals
-    "Quinoa",
-    "Buckwheat",
-    "Flax (Linseed)",
-    "Teff",
-];
-const wastageReasons = [
-    "Weather",
-    "Pest Attack",
-    "Transport",
-    "Overproduction",
-    "Other",
-];
+const getTranslatedWastageReasons = (t: any) => {
+    return wastageReasonKeys.map(key => ({
+        key,
+        label: t(`wastageReasons.${key}`)
+    }));
+};
 
 interface FarmerDataFormProps {
     onSuccess: () => void;
@@ -141,6 +69,13 @@ export function FarmerDataForm({onSuccess}: FarmerDataFormProps) {
     const [isForward, setIsForward] = useState(true);
     const {profile, user} = useAuth();
     const {t} = useTranslation("dashboard");
+
+    // Get translated crops and wastage reasons
+    const translatedCrops = getTranslatedCrops(t);
+    const translatedWastageReasons = getTranslatedWastageReasons(t);
+
+    // Sort crops alphabetically by translated label
+    const sortedCrops = [...translatedCrops].sort((a, b) => a.label.localeCompare(b.label));
 
     // Build validation schema with translated messages
     const formSchema = z.object({
@@ -363,16 +298,18 @@ export function FarmerDataForm({onSuccess}: FarmerDataFormProps) {
                                                 <Label htmlFor="crop">{t("form.labels.crop")}</Label>
                                                 <p className="text-xs text-muted-foreground">{steps[currentStep].description}</p>
                                                 <Select
-                                                    onValueChange={(value) => setValue("crop", value, {shouldValidate: true})}
                                                     value={watch("crop")}
+                                                    onValueChange={(value) => {
+                                                        setValue("crop", value, {shouldValidate: true});
+                                                    }}
                                                 >
-                                                    <SelectTrigger className="bg-background">
-                                                        <SelectValue placeholder={t("form.placeholders.crop")}/>
+                                                    <SelectTrigger id="crop">
+                                                        <SelectValue placeholder={t("form.placeholders.selectCrop")}/>
                                                     </SelectTrigger>
-                                                    <SelectContent className="bg-popover z-50">
-                                                        {crops.map((crop) => (
-                                                            <SelectItem key={crop} value={crop}>
-                                                                {crop}
+                                                    <SelectContent>
+                                                        {sortedCrops.map(({key, label}) => (
+                                                            <SelectItem key={key} value={key}>
+                                                                {label}
                                                             </SelectItem>
                                                         ))}
                                                     </SelectContent>
@@ -440,26 +377,20 @@ export function FarmerDataForm({onSuccess}: FarmerDataFormProps) {
                                                 <Label htmlFor="reason">{t("form.labels.reason")}</Label>
                                                 <p className="text-xs text-muted-foreground">{steps[currentStep].description}</p>
                                                 <Select
-                                                    onValueChange={(value) => setValue("reason", value, {shouldValidate: true})}
                                                     value={watch("reason")}
+                                                    onValueChange={(value) => {
+                                                        setValue("reason", value, {shouldValidate: true});
+                                                    }}
                                                 >
-                                                    <SelectTrigger className="bg-background">
-                                                        <SelectValue placeholder={t("form.placeholders.reason")}/>
+                                                    <SelectTrigger id="reason">
+                                                        <SelectValue placeholder={t("form.placeholders.selectReason")}/>
                                                     </SelectTrigger>
-                                                    <SelectContent className="bg-popover z-50">
-                                                        {wastageReasons.map((reason) => {
-                                                            const key =
-                                                                reason === "Weather" ? "weather" :
-                                                                    reason === "Pest Attack" ? "pest" :
-                                                                        reason === "Transport" ? "transport" :
-                                                                            reason === "Overproduction" ? "overproduction" :
-                                                                                "other";
-                                                            return (
-                                                                <SelectItem key={reason} value={reason}>
-                                                                    {t(`form.reasons.${key}`)}
-                                                                </SelectItem>
-                                                            );
-                                                        })}
+                                                    <SelectContent>
+                                                        {translatedWastageReasons.map(({key, label}) => (
+                                                            <SelectItem key={key} value={key}>
+                                                                {label}
+                                                            </SelectItem>
+                                                        ))}
                                                     </SelectContent>
                                                 </Select>
                                                 {errors.reason && (
@@ -496,7 +427,6 @@ export function FarmerDataForm({onSuccess}: FarmerDataFormProps) {
                                             type="button"
                                             variant="outline"
                                             className="w-1/2"
-                                            onClick={goBack}
                                             disabled={showIntro || isSubmitting}
                                         >
                                             {t("form.buttons.back")}
