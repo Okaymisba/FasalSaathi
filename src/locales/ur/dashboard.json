@@ -60,6 +60,10 @@
       "placeholders": {
         "province": "صوبہ منتخب کریں",
         "all": "تمام"
+      },
+      "buttons": {
+        "apply": "درخواست دیں",
+        "applying": "درخواست دی جا رہی ہے"
       }
     },
     "stats": {

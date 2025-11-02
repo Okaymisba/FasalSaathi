@@ -60,6 +60,10 @@
       "placeholders": {
         "province": "صوبو چونڊيو",
         "all": "سڀ"
+      },
+      "buttons": {
+        "apply": "درخواست موڪليو",
+        "applying": "درخواست موڪلي پئي وڃي"
       }
     },
     "stats": {

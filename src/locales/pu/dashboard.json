@@ -60,6 +60,10 @@
       "placeholders": {
         "province": "صوبہ منتخب کرو",
         "all": "سارے"
+      },
+      "buttons": {
+        "apply": "درخواست دو",
+        "applying": "درخواست دی جا رہی ہے"
       }
     },
     "stats": {

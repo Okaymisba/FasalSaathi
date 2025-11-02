@@ -60,6 +60,10 @@
       "placeholders": {
         "province": "Select province",
         "all": "All"
+      },
+      "buttons": {
+        "apply": "Apply",
+        "applying": "Applying"
       }
     },
     "stats": {
