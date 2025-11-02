@@ -3,6 +3,7 @@ import {useNavigate} from "react-router-dom";
 import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
 import * as z from "zod";
+import {useTranslation} from "react-i18next";
 import {supabase} from "@/integrations/supabase/client";
 import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
@@ -12,36 +13,38 @@ import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
 import {toast} from "sonner";
 import {Loader2, Sprout} from "lucide-react";
+import {Navbar} from "@/components/Navbar";
 
 const provinces = ["Punjab", "Sindh", "KPK", "Balochistan", "Gilgit-Baltistan", "Azad Kashmir", "ICT"];
 
-const loginSchema = z.object({
-    email: z.string().email("Invalid email address"),
-    password: z.string().min(6, "Password must be at least 6 characters"),
+const LoginSchema = (t: any) => z.object({
+    email: z.string().email(t('validation.invalidEmail')),
+    password: z.string().min(6, t('validation.minLength', {count: 6})),
 });
 
-const signupSchema = z.object({
-    name: z.string().min(2, "Name must be at least 2 characters"),
-    email: z.string().email("Invalid email address"),
-    password: z.string().min(6, "Password must be at least 6 characters"),
+const SignupSchema = (t: any) => z.object({
+    name: z.string().min(2, t('validation.minLength', {count: 2})),
+    email: z.string().email(t('validation.invalidEmail')),
+    password: z.string().min(6, t('validation.minLength', {count: 6})),
     phone: z.string().optional(),
-    province: z.string().min(1, "Please select a province"),
-    district: z.string().min(2, "District must be at least 2 characters"),
+    province: z.string().min(1, t('validation.required')),
+    district: z.string().min(2, t('validation.minLength', {count: 2})),
 });
 
-type LoginData = z.infer<typeof loginSchema>;
-type SignupData = z.infer<typeof signupSchema>;
+type LoginData = z.infer<ReturnType<typeof LoginSchema>>;
+type SignupData = z.infer<ReturnType<typeof SignupSchema>>;
 
 export default function Auth() {
+    const {t} = useTranslation('auth');
     const navigate = useNavigate();
     const [isLoading, setIsLoading] = useState(false);
 
     const loginForm = useForm<LoginData>({
-        resolver: zodResolver(loginSchema),
+        resolver: zodResolver(LoginSchema(t)),
     });
 
     const signupForm = useForm<SignupData>({
-        resolver: zodResolver(signupSchema),
+        resolver: zodResolver(SignupSchema(t)),
     });
 
     const handleLogin = async (data: LoginData) => {
@@ -54,11 +57,11 @@ export default function Auth() {
 
             if (error) throw error;
 
-            toast.success("Welcome back!");
+            toast.success(t('welcomeBack'));
             navigate("/app");
         } catch (error: any) {
-            toast.error("Login failed", {
-                description: error.message || "Please check your credentials and try again.",
+            toast.error(t('errors.loginFailed'), {
+                description: error.message || t('errors.checkCredentials'),
             });
         } finally {
             setIsLoading(false);
@@ -84,13 +87,13 @@ export default function Auth() {
 
             if (error) throw error;
 
-            toast.success("Account created successfully!", {
-                description: "Please check your email to confirm your account.",
+            toast.success(t('errors.accountCreated'), {
+                description: t('errors.checkEmail'),
             });
             signupForm.reset();
         } catch (error: any) {
-            toast.error("Signup failed", {
-                description: error.message || "Please try again later.",
+            toast.error(t('errors.signupFailed'), {
+                description: error.message || t('errors.tryAgain'),
             });
         } finally {
             setIsLoading(false);
@@ -98,148 +101,170 @@ export default function Auth() {
     };
 
     return (
-        <div
-            className="min-h-screen bg-gradient-to-br from-background via-primary/5 to-accent/5 flex items-center justify-center p-4">
-            <Card className="w-full max-w-md shadow-[var(--shadow-card)]">
-                <CardHeader className="text-center bg-gradient-to-r from-primary/10 to-accent/10">
-                    <div className="flex items-center justify-center gap-2 mb-2">
-                        <Sprout className="h-8 w-8 text-primary"/>
-                        <h1 className="text-2xl font-bold">AgriScope</h1>
-                    </div>
-                    <CardDescription>Pakistan Crop Insights</CardDescription>
-                </CardHeader>
-                <CardContent className="pt-6">
-                    <Tabs defaultValue="login" className="w-full">
-                        <TabsList className="grid w-full grid-cols-2">
-                            <TabsTrigger value="login">Login</TabsTrigger>
-                            <TabsTrigger value="signup">Sign Up</TabsTrigger>
-                        </TabsList>
+        <>
+            <Navbar/>
+            <div
+                className="min-h-screen bg-gradient-to-br from-background via-primary/5 to-accent/5 flex items-center justify-center p-4">
+                <Card className="w-full max-w-md shadow-[var(--shadow-card)]">
+                    <CardHeader className="text-center bg-gradient-to-r from-primary/10 to-accent/10">
+                        <div className="flex items-center justify-center gap-2 mb-2">
+                            <Sprout className="h-8 w-8 text-primary"/>
+                            <h1 className="text-2xl font-bold">{t('appName')}</h1>
+                        </div>
+                        <CardDescription>{t('appDescription')}</CardDescription>
+                    </CardHeader>
+                    <CardContent className="pt-6">
+                        <Tabs defaultValue="login" className="w-full">
+                            <TabsList className="grid w-full grid-cols-2">
+                                <TabsTrigger value="login">{t('login.title')}</TabsTrigger>
+                                <TabsTrigger value="signup">{t('signup.title')}</TabsTrigger>
+                            </TabsList>
 
-                        <TabsContent value="login">
-                            <form onSubmit={loginForm.handleSubmit(handleLogin)} className="space-y-4">
-                                <div className="space-y-2">
-                                    <Label htmlFor="login-email">Email</Label>
-                                    <Input
-                                        id="login-email"
-                                        type="email"
-                                        placeholder="your@email.com"
-                                        {...loginForm.register("email")}
-                                    />
-                                    {loginForm.formState.errors.email && (
-                                        <p className="text-sm text-destructive">{loginForm.formState.errors.email.message}</p>
-                                    )}
-                                </div>
+                            <TabsContent value="login">
+                                <form onSubmit={loginForm.handleSubmit(handleLogin)} className="space-y-4">
+                                    <div className="space-y-2">
+                                        <Label htmlFor="login-email">{t('login.email')}</Label>
+                                        <Input
+                                            id="login-email"
+                                            type="email"
+                                            placeholder={t('login.email')}
+                                            {...loginForm.register("email")}
+                                        />
+                                        {loginForm.formState.errors.email && (
+                                            <p className="text-sm text-destructive">{loginForm.formState.errors.email.message}</p>
+                                        )}
+                                    </div>
 
-                                <div className="space-y-2">
-                                    <Label htmlFor="login-password">Password</Label>
-                                    <Input
-                                        id="login-password"
-                                        type="password"
-                                        {...loginForm.register("password")}
-                                    />
-                                    {loginForm.formState.errors.password && (
-                                        <p className="text-sm text-destructive">{loginForm.formState.errors.password.message}</p>
-                                    )}
-                                </div>
+                                    <div className="space-y-2">
+                                        <Label htmlFor="login-password">{t('login.password')}</Label>
+                                        <Input
+                                            id="login-password"
+                                            type="password"
+                                            placeholder={t('login.password')}
+                                            {...loginForm.register("password")}
+                                        />
+                                        <div className="text-right text-sm">
+                                            <button type="button" className="text-primary hover:underline">
+                                                {t('login.forgotPassword')}
+                                            </button>
+                                        </div>
+                                        {loginForm.formState.errors.password && (
+                                            <p className="text-sm text-destructive">{loginForm.formState.errors.password.message}</p>
+                                        )}
+                                    </div>
 
-                                <Button type="submit" className="w-full" disabled={isLoading}>
-                                    {isLoading ? <><Loader2 className="mr-2 h-4 w-4 animate-spin"/>Logging
-                                        in...</> : "Login"}
-                                </Button>
-                            </form>
-                        </TabsContent>
+                                    <Button type="submit" className="w-full" disabled={isLoading}>
+                                        {isLoading ? (
+                                            <>
+                                                <Loader2 className="mr-2 h-4 w-4 animate-spin"/>
+                                                {t('login.loggingIn')}
+                                            </>
+                                        ) : (
+                                            t('login.submit')
+                                        )}
+                                    </Button>
+                                </form>
+                            </TabsContent>
 
-                        <TabsContent value="signup">
-                            <form onSubmit={signupForm.handleSubmit(handleSignup)} className="space-y-4">
-                                <div className="space-y-2">
-                                    <Label htmlFor="signup-name">Full Name *</Label>
-                                    <Input
-                                        id="signup-name"
-                                        placeholder="Muhammad Ali"
-                                        {...signupForm.register("name")}
-                                    />
-                                    {signupForm.formState.errors.name && (
-                                        <p className="text-sm text-destructive">{signupForm.formState.errors.name.message}</p>
-                                    )}
-                                </div>
+                            <TabsContent value="signup">
+                                <form onSubmit={signupForm.handleSubmit(handleSignup)} className="space-y-4">
+                                    <div className="space-y-2">
+                                        <Label htmlFor="signup-name">{t('signup.name')} *</Label>
+                                        <Input
+                                            id="signup-name"
+                                            placeholder={t('signup.name')}
+                                            {...signupForm.register("name")}
+                                        />
+                                        {signupForm.formState.errors.name && (
+                                            <p className="text-sm text-destructive">{signupForm.formState.errors.name.message}</p>
+                                        )}
+                                    </div>
 
-                                <div className="space-y-2">
-                                    <Label htmlFor="signup-email">Email *</Label>
-                                    <Input
-                                        id="signup-email"
-                                        type="email"
-                                        placeholder="your@email.com"
-                                        {...signupForm.register("email")}
-                                    />
-                                    {signupForm.formState.errors.email && (
-                                        <p className="text-sm text-destructive">{signupForm.formState.errors.email.message}</p>
-                                    )}
-                                </div>
+                                    <div className="space-y-2">
+                                        <Label htmlFor="signup-email">{t('signup.email')} *</Label>
+                                        <Input
+                                            id="signup-email"
+                                            type="email"
+                                            placeholder={t('signup.email')}
+                                            {...signupForm.register("email")}
+                                        />
+                                        {signupForm.formState.errors.email && (
+                                            <p className="text-sm text-destructive">{signupForm.formState.errors.email.message}</p>
+                                        )}
+                                    </div>
 
-                                <div className="space-y-2">
-                                    <Label htmlFor="signup-password">Password *</Label>
-                                    <Input
-                                        id="signup-password"
-                                        type="password"
-                                        {...signupForm.register("password")}
-                                    />
-                                    {signupForm.formState.errors.password && (
-                                        <p className="text-sm text-destructive">{signupForm.formState.errors.password.message}</p>
-                                    )}
-                                </div>
+                                    <div className="space-y-2">
+                                        <Label htmlFor="signup-password">{t('signup.password')} *</Label>
+                                        <Input
+                                            id="signup-password"
+                                            type="password"
+                                            placeholder={t('signup.password')}
+                                            {...signupForm.register("password")}
+                                        />
+                                        {signupForm.formState.errors.password && (
+                                            <p className="text-sm text-destructive">{signupForm.formState.errors.password.message}</p>
+                                        )}
+                                    </div>
 
-                                <div className="space-y-2">
-                                    <Label htmlFor="signup-phone">Phone Number</Label>
-                                    <Input
-                                        id="signup-phone"
-                                        placeholder="+92 300 1234567"
-                                        {...signupForm.register("phone")}
-                                    />
-                                </div>
+                                    <div className="space-y-2">
+                                        <Label htmlFor="signup-phone">{t('signup.phone')}</Label>
+                                        <Input
+                                            id="signup-phone"
+                                            placeholder={t('signup.phone')}
+                                            {...signupForm.register("phone")}
+                                        />
+                                    </div>
 
-                                <div className="space-y-2">
-                                    <Label htmlFor="signup-province">Province *</Label>
-                                    <Select
-                                        onValueChange={(value) => signupForm.setValue("province", value)}
-                                        value={signupForm.watch("province")}
-                                    >
-                                        <SelectTrigger>
-                                            <SelectValue placeholder="Select your province"/>
-                                        </SelectTrigger>
-                                        <SelectContent className="z-50">
-                                            {provinces.map((province) => (
-                                                <SelectItem key={province} value={province}>
-                                                    {province}
-                                                </SelectItem>
-                                            ))}
-                                        </SelectContent>
-                                    </Select>
-                                    {signupForm.formState.errors.province && (
-                                        <p className="text-sm text-destructive">{signupForm.formState.errors.province.message}</p>
-                                    )}
-                                </div>
+                                    <div className="space-y-2">
+                                        <Label htmlFor="signup-province">{t('signup.province')} *</Label>
+                                        <Select
+                                            onValueChange={(value) => signupForm.setValue("province", value)}
+                                            value={signupForm.watch("province")}
+                                        >
+                                            <SelectTrigger>
+                                                <SelectValue placeholder={t('signup.selectProvince')}/>
+                                            </SelectTrigger>
+                                            <SelectContent className="z-50">
+                                                {provinces.map((province) => (
+                                                    <SelectItem key={province} value={province}>
+                                                        {province}
+                                                    </SelectItem>
+                                                ))}
+                                            </SelectContent>
+                                        </Select>
+                                        {signupForm.formState.errors.province && (
+                                            <p className="text-sm text-destructive">{signupForm.formState.errors.province.message}</p>
+                                        )}
+                                    </div>
 
-                                <div className="space-y-2">
-                                    <Label htmlFor="signup-district">District / City *</Label>
-                                    <Input
-                                        id="signup-district"
-                                        placeholder="e.g., Lahore, Karachi"
-                                        {...signupForm.register("district")}
-                                    />
-                                    {signupForm.formState.errors.district && (
-                                        <p className="text-sm text-destructive">{signupForm.formState.errors.district.message}</p>
-                                    )}
-                                </div>
+                                    <div className="space-y-2">
+                                        <Label htmlFor="signup-district">{t('signup.district')} *</Label>
+                                        <Input
+                                            id="signup-district"
+                                            placeholder={t('signup.district')}
+                                            {...signupForm.register("district")}
+                                        />
+                                        {signupForm.formState.errors.district && (
+                                            <p className="text-sm text-destructive">{signupForm.formState.errors.district.message}</p>
+                                        )}
+                                    </div>
 
-                                <Button type="submit" className="w-full" disabled={isLoading}>
-                                    {isLoading ? <><Loader2 className="mr-2 h-4 w-4 animate-spin"/>Creating
-                                        account...</> : "Sign Up"}
-                                </Button>
-                            </form>
-                        </TabsContent>
-                    </Tabs>
-                </CardContent>
-            </Card>
-        </div>
+                                    <Button type="submit" className="w-full" disabled={isLoading}>
+                                        {isLoading ? (
+                                            <>
+                                                <Loader2 className="mr-2 h-4 w-4 animate-spin"/>
+                                                {t('signup.creatingAccount')}
+                                            </>
+                                        ) : (
+                                            t('signup.submit')
+                                        )}
+                                    </Button>
+                                </form>
+                            </TabsContent>
+                        </Tabs>
+                    </CardContent>
+                </Card>
+            </div>
+        </>
     );
 }
