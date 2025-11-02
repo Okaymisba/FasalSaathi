@@ -8,6 +8,7 @@ import enLandingPage from "./locales/en/landingPage.json";
 import enFooter from "./locales/en/footer.json";
 import enDashboard from "./locales/en/dashboard.json";
 import enLeaderboard from "./locales/en/leaderboard.json";
+import enAuth from "./locales/en/auth.json";
 
 // Urdu (RTL)
 import urHeader from "./locales/ur/header.json";
@@ -15,6 +16,7 @@ import urLandingPage from "./locales/ur/landingPage.json";
 import urFooter from "./locales/ur/footer.json";
 import urDashboard from "./locales/ur/dashboard.json";
 import urLeaderboard from "./locales/ur/leaderboard.json";
+import urAuth from "./locales/ur/auth.json";
 
 // Sindhi (RTL)
 import sdHeader from "./locales/sd/header.json";
@@ -22,6 +24,7 @@ import sdLandingPage from "./locales/sd/landingPage.json";
 import sdFooter from "./locales/sd/footer.json";
 import sdDashboard from "./locales/sd/dashboard.json";
 import sdLeaderboard from "./locales/sd/leaderboard.json";
+import sdAuth from "./locales/sd/auth.json";
 
 export const RTL_LANGS = new Set(["ur", "sd"]);
 
@@ -42,6 +45,7 @@ i18n
                 footer: enFooter,
                 dashboard: enDashboard,
                 leaderboard: enLeaderboard,
+                auth: enAuth,
             },
             ur: {
                 header: urHeader,
@@ -49,6 +53,7 @@ i18n
                 footer: urFooter,
                 dashboard: urDashboard,
                 leaderboard: urLeaderboard,
+                auth: urAuth,
             },
             sd: {
                 header: sdHeader,
@@ -56,6 +61,7 @@ i18n
                 footer: sdFooter,
                 dashboard: sdDashboard,
                 leaderboard: sdLeaderboard,
+                auth: sdAuth,
             },
         },
         fallbackLng: "en",
@@ -65,6 +71,7 @@ i18n
             "footer",
             "dashboard",
             "leaderboard",
+            "auth",
         ],
         defaultNS: "header",
         interpolation: {escapeValue: false},
