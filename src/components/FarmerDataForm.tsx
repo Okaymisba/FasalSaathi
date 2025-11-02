@@ -71,6 +71,58 @@ export function FarmerDataForm({onSuccess}: FarmerDataFormProps) {
     const [uploadProgress, setUploadProgress] = useState<number>(0);
     const [isUploading, setIsUploading] = useState(false);
     const [previewUrls, setPreviewUrls] = useState<string[]>([]);
+    const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
+
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const files = e.target.files;
+        if (!files || files.length === 0) return;
+
+        // Convert FileList to array and add new files
+        const newFiles = Array.from(files);
+        const updatedFiles = [...selectedFiles, ...newFiles].slice(0, 5); // Limit to 5 files
+
+        // Update state
+        setSelectedFiles(updatedFiles);
+
+        // Create a new DataTransfer object to update the file input
+        const dataTransfer = new DataTransfer();
+        updatedFiles.forEach(file => dataTransfer.items.add(file));
+        const fileInput = document.getElementById('dropzone-file') as HTMLInputElement;
+        if (fileInput) {
+            fileInput.files = dataTransfer.files;
+        }
+
+        // Update form value
+        setValue("images", dataTransfer.files as any, {shouldValidate: true});
+
+        // Update preview URLs and revoke old URLs to prevent memory leaks
+        previewUrls.forEach(url => URL.revokeObjectURL(url));
+        const urls = updatedFiles.map(file => URL.createObjectURL(file));
+        setPreviewUrls(urls);
+    };
+
+    const handleRemoveImage = (index: number) => {
+        const newFiles = [...selectedFiles];
+        newFiles.splice(index, 1);
+        setSelectedFiles(newFiles);
+
+        // Update the file input
+        const dataTransfer = new DataTransfer();
+        newFiles.forEach(file => dataTransfer.items.add(file));
+        const fileInput = document.getElementById('dropzone-file') as HTMLInputElement;
+        if (fileInput) {
+            fileInput.files = dataTransfer.files;
+        }
+
+        // Update form value
+        setValue("images", dataTransfer.files as any, {shouldValidate: true});
+
+        // Update preview URLs and revoke old URLs to prevent memory leaks
+        const urls = [...previewUrls];
+        URL.revokeObjectURL(urls[index]);
+        urls.splice(index, 1);
+        setPreviewUrls(urls);
+    };
     const {profile, user} = useAuth();
     const {t} = useTranslation("dashboard");
 
@@ -191,8 +243,8 @@ export function FarmerDataForm({onSuccess}: FarmerDataFormProps) {
         setCurrentStep((s) => Math.max(s - 1, 0));
     };
 
-    const uploadImages = async (files: FileList): Promise<string[]> => {
-        if (!files || files.length === 0) return [];
+    const uploadImages = async (): Promise<string[]> => {
+        if (selectedFiles.length === 0) return [];
         if (!user) {
             throw new Error("User not authenticated");
         }
@@ -202,10 +254,10 @@ export function FarmerDataForm({onSuccess}: FarmerDataFormProps) {
 
         try {
             const paths: string[] = [];
-            const totalFiles = files.length;
+            const totalFiles = selectedFiles.length;
 
             for (let i = 0; i < totalFiles; i++) {
-                const file = files[i];
+                const file = selectedFiles[i];
 
                 // Check file size (5MB max)
                 if (file.size > 5 * 1024 * 1024) {
@@ -261,8 +313,16 @@ export function FarmerDataForm({onSuccess}: FarmerDataFormProps) {
             let imagePaths: string[] = [];
 
             // Upload images if any
-            if (data.images && data.images.length > 0) {
-                imagePaths = await uploadImages(data.images);
+            if (selectedFiles.length > 0) {
+                try {
+                    imagePaths = await uploadImages();
+                } catch (uploadError) {
+                    console.error('Image upload failed:', uploadError);
+                    toast.error(t("form.toasts.uploadError.title"), {
+                        description: uploadError instanceof Error ? uploadError.message : t("form.toasts.uploadError.desc"),
+                    });
+                    return;
+                }
             }
 
             const {error} = await supabase.from("farmer_data").insert({
@@ -274,10 +334,13 @@ export function FarmerDataForm({onSuccess}: FarmerDataFormProps) {
                 yield: Number(data.harvested_amount),
                 wastage: Number(data.wastage),
                 reason: data.reason,
-                image_paths: imagePaths,
+                image_paths: imagePaths.length > 0 ? imagePaths : null,
             } as any);
 
-            if (error) throw error;
+            if (error) {
+                console.error('Database error:', error);
+                throw error;
+            }
 
             toast.success(t("form.toasts.submitSuccess.title"), {
                 description: t("form.toasts.submitSuccess.desc"),
@@ -285,6 +348,7 @@ export function FarmerDataForm({onSuccess}: FarmerDataFormProps) {
 
             // Reset form and previews
             setPreviewUrls([]);
+            setSelectedFiles([]); // Clear selected files
             reset();
             onSuccess();
         } catch (error) {
@@ -516,18 +580,10 @@ export function FarmerDataForm({onSuccess}: FarmerDataFormProps) {
                                                                 multiple
                                                                 accept="image/png, image/jpeg, image/webp"
                                                                 className="hidden"
-                                                                onChange={(e) => {
-                                                                    const files = e.target.files;
-                                                                    if (files) {
-                                                                        setValue("images", files, {shouldValidate: true});
-
-                                                                        // Create preview URLs
-                                                                        const urls = [];
-                                                                        for (let i = 0; i < Math.min(files.length, 5); i++) {
-                                                                            urls.push(URL.createObjectURL(files[i]));
-                                                                        }
-                                                                        setPreviewUrls(urls);
-                                                                    }
+                                                                onChange={handleFileChange}
+                                                                onClick={(e) => {
+                                                                    // Reset the value to allow selecting the same file again
+                                                                    (e.target as HTMLInputElement).value = '';
                                                                 }}
                                                             />
                                                         </label>
@@ -535,66 +591,57 @@ export function FarmerDataForm({onSuccess}: FarmerDataFormProps) {
                                                     {errors.images && (
                                                         <p className="text-sm text-destructive mt-2">{errors.images.message as string}</p>
                                                     )}
-                                                </div>
 
-                                                {isUploading && (
-                                                    <div className="space-y-2">
-                                                        <div className="flex justify-between text-sm">
-                                                            <span>Uploading {uploadProgress}%</span>
-                                                            <span>{Math.round((uploadProgress / 100) * (watch("images")?.length || 0))}/{(watch("images")?.length || 0)}</span>
-                                                        </div>
-                                                        <div
-                                                            className="h-2 w-full bg-muted rounded-full overflow-hidden">
+                                                    {isUploading && (
+                                                        <div className="space-y-2">
+                                                            <div className="flex justify-between text-sm">
+                                                                <span>Uploading {uploadProgress}%</span>
+                                                                <span>{Math.round((uploadProgress / 100) * (watch("images")?.length || 0))}/{(watch("images")?.length || 0)}</span>
+                                                            </div>
                                                             <div
-                                                                className="h-full bg-primary transition-all duration-300"
-                                                                style={{width: `${uploadProgress}%`}}
-                                                            />
+                                                                className="h-2 w-full bg-muted rounded-full overflow-hidden">
+                                                                <div
+                                                                    className="h-full bg-primary transition-all duration-300"
+                                                                    style={{width: `${uploadProgress}%`}}
+                                                                />
+                                                            </div>
                                                         </div>
-                                                    </div>
-                                                )}
+                                                    )}
 
-                                                {previewUrls.length > 0 && (
-                                                    <div className="mt-4">
-                                                        <h4 className="text-sm font-medium mb-2">Preview
-                                                            ({previewUrls.length})</h4>
-                                                        <div className="flex flex-wrap gap-2">
-                                                            {previewUrls.map((url, index) => (
-                                                                <div key={index} className="relative group">
-                                                                    <div
-                                                                        className="w-20 h-20 rounded-md overflow-hidden border border-muted">
-                                                                        <img
-                                                                            src={url}
-                                                                            alt={`Preview ${index + 1}`}
-                                                                            className="w-full h-full object-cover"
-                                                                        />
+                                                    {previewUrls.length > 0 && (
+                                                        <div className="mt-4">
+                                                            <h4 className="text-sm font-medium mb-2">Preview
+                                                                ({previewUrls.length})</h4>
+                                                            <div className="flex flex-wrap gap-2">
+                                                                {previewUrls.map((url, index) => (
+                                                                    <div key={index} className="relative group">
+                                                                        <div
+                                                                            className="w-20 h-20 rounded-md overflow-hidden border border-muted">
+                                                                            <img
+                                                                                src={url}
+                                                                                alt={`Preview ${index + 1}`}
+                                                                                className="w-full h-full object-cover"
+                                                                            />
+                                                                        </div>
+                                                                        <button
+                                                                            type="button"
+                                                                            onClick={() => {
+                                                                                const newPreviewUrls = [...previewUrls];
+                                                                                newPreviewUrls.splice(index, 1);
+                                                                                setPreviewUrls(newPreviewUrls);
+
+                                                                                handleRemoveImage(index);
+                                                                            }}
+                                                                            className="absolute -top-2 -right-2 bg-destructive text-destructive-foreground rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                                                                        >
+                                                                            <X className="h-3 w-3"/>
+                                                                        </button>
                                                                     </div>
-                                                                    <button
-                                                                        type="button"
-                                                                        onClick={() => {
-                                                                            const newPreviewUrls = [...previewUrls];
-                                                                            newPreviewUrls.splice(index, 1);
-                                                                            setPreviewUrls(newPreviewUrls);
-
-                                                                            // Update the files list
-                                                                            const dataTransfer = new DataTransfer();
-                                                                            const input = document.getElementById('dropzone-file') as HTMLInputElement;
-                                                                            if (input.files) {
-                                                                                const files = Array.from(input.files);
-                                                                                files.splice(index, 1);
-                                                                                files.forEach(file => dataTransfer.items.add(file));
-                                                                                input.files = dataTransfer.files;
-                                                                                setValue("images", dataTransfer.files as any, {shouldValidate: true});
-                                                                            }
-                                                                        }}
-                                                                        className="absolute -top-2 -right-2 bg-destructive text-destructive-foreground rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
-                                                                    >
-                                                                        <X className="h-3 w-3"/>
-                                                                    </button>
-                                                                </div>
-                                                            ))}
+                                                                ))}
+                                                            </div>
                                                         </div>
-                                                    </div>
-                                                )}
+                                                    )}
+                                                </div>
                                             </div>
                                         )}
 
@@ -610,53 +657,53 @@ export function FarmerDataForm({onSuccess}: FarmerDataFormProps) {
                                                         onCheckedChange={(val) => setValue("attestation", !!val, {shouldValidate: true})}
                                                     />
                                                     <span className="text-sm leading-6">
-                        {t("form.attestation.text")}
-                    </span>
+                                                        {t("form.attestation.text")}
+                                                    </span>
                                                 </div>
                                                 {errors.attestation && (
                                                     <p className="text-sm text-destructive">{errors.attestation.message}</p>
                                                 )}
                                             </div>
                                         )}
-                                    </div>
 
-                                    {/* Navigation Buttons */}
-                                    <div className="flex gap-3 mt-4 pt-2">
-                                        <Button
-                                            type="button"
-                                            variant="outline"
-                                            className="w-1/2"
-                                            onClick={goBack}
-                                            disabled={showIntro || isSubmitting}
-                                        >
-                                            {t("form.buttons.back")}
-                                        </Button>
-
-                                        {currentStep < totalSteps - 1 ? (
+                                        {/* Navigation Buttons */}
+                                        <div className="flex gap-3 mt-4 pt-2">
                                             <Button
                                                 type="button"
-                                                className="w-1/2 bg-gradient-to-r from-primary to-accent hover:opacity-90 transition-opacity"
-                                                onClick={goNext}
-                                                disabled={isSubmitting || showIntro}
+                                                variant="outline"
+                                                className="w-1/2"
+                                                onClick={goBack}
+                                                disabled={showIntro || isSubmitting}
                                             >
-                                                {t("form.buttons.next")}
+                                                {t("form.buttons.back")}
                                             </Button>
-                                        ) : (
-                                            <Button
-                                                type="submit"
-                                                className="w-1/2 bg-gradient-to-r from-primary to-accent hover:opacity-90 transition-opacity"
-                                                disabled={isSubmitting || !watch("attestation") || showIntro}
-                                            >
-                                                {isSubmitting ? (
-                                                    <>
-                                                        <Loader2 className="mr-2 h-4 w-4 animate-spin"/>
-                                                        {t("form.buttons.submitting")}
-                                                    </>
-                                                ) : (
-                                                    t("form.buttons.submit")
-                                                )}
-                                            </Button>
-                                        )}
+
+                                            {currentStep < totalSteps - 1 ? (
+                                                <Button
+                                                    type="button"
+                                                    className="w-1/2 bg-gradient-to-r from-primary to-accent hover:opacity-90 transition-opacity"
+                                                    onClick={goNext}
+                                                    disabled={isSubmitting || showIntro}
+                                                >
+                                                    {t("form.buttons.next")}
+                                                </Button>
+                                            ) : (
+                                                <Button
+                                                    type="submit"
+                                                    className="w-1/2 bg-gradient-to-r from-primary to-accent hover:opacity-90 transition-opacity"
+                                                    disabled={isSubmitting || !watch("attestation") || showIntro}
+                                                >
+                                                    {isSubmitting ? (
+                                                        <>
+                                                            <Loader2 className="mr-2 h-4 w-4 animate-spin"/>
+                                                            {t("form.buttons.submitting")}
+                                                        </>
+                                                    ) : (
+                                                        t("form.buttons.submit")
+                                                    )}
+                                                </Button>
+                                            )}
+                                        </div>
                                     </div>
                                 </div>
                             </div>
