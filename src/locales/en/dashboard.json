@@ -8,7 +8,8 @@
   "welcomeSubtitle": "Submit crop data and view provincial analytics",
   "tabs": {
     "submit": "Submit Data",
-    "analytics": "View Analytics"
+    "analytics": "View Analytics",
+    "leaderboard": "Leaderboard"
   },
   "analytics": {
     "noData": {

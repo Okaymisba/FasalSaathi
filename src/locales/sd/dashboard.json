@@ -8,7 +8,8 @@
   "welcomeSubtitle": "فصلن جو ڊيٽا جمع ڪريو ۽ صوبي جي سطح تي تجزيا ڏسو",
   "tabs": {
     "submit": "ڊيٽا جمع ڪريو",
-    "analytics": "تجزيا ڏسو"
+    "analytics": "تجزيا ڏسو",
+    "leaderboard": "ليڊر بورڊ"
   },
   "analytics": {
     "noData": {

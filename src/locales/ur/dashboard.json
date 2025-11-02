@@ -8,7 +8,8 @@
   "welcomeSubtitle": "فصل کا ڈیٹا جمع کریں اور صوبائی تجزیات دیکھیں",
   "tabs": {
     "submit": "ڈیٹا جمع کریں",
-    "analytics": "تجزیات دیکھیں"
+    "analytics": "تجزیات دیکھیں",
+    "leaderboard": "لیڈر بورڈ"
   },
   "analytics": {
     "noData": {
