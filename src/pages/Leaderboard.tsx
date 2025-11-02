@@ -1,11 +1,13 @@
 import {useEffect, useState} from "react";
+import {useNavigate} from "react-router-dom";
 import {supabase} from "@/integrations/supabase/client";
 import {useAuth} from "@/hooks/useAuth";
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow,} from "@/components/ui/table";
 import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card";
-import {Award, Medal, Trophy} from "lucide-react";
+import {ArrowLeft, Award, Medal, Trophy} from "lucide-react";
 import {Skeleton} from "@/components/ui/skeleton";
 import {Navbar} from "@/components/Navbar";
+import {Button} from "@/components/ui/button";
 
 interface LeaderboardEntry {
     farmer_id: string;
@@ -18,6 +20,7 @@ interface LeaderboardEntry {
 }
 
 export default function Leaderboard() {
+    const navigate = useNavigate();
     const {user} = useAuth();
     const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([]);
     const [loading, setLoading] = useState(true);
@@ -145,9 +148,20 @@ export default function Leaderboard() {
             <Navbar/>
             <div className="container mx-auto p-6 space-y-6">
                 <div className="flex items-center justify-between">
-                    <div>
-                        <h1 className="text-3xl font-bold text-foreground">Leaderboard</h1>
-                        <p className="text-muted-foreground mt-2">
+                    <div className="space-y-2">
+                        <div className="flex items-center gap-4">
+                            <Button
+                                variant="outline"
+                                size="icon"
+                                className="h-8 w-8"
+                                onClick={() => navigate(-1)}
+                            >
+                                <ArrowLeft className="h-4 w-4"/>
+                                <span className="sr-only">Back</span>
+                            </Button>
+                            <h1 className="text-3xl font-bold text-foreground">Leaderboard</h1>
+                        </div>
+                        <p className="text-muted-foreground ml-12">
                             Top performing farmers ranked by yield efficiency
                         </p>
                     </div>
