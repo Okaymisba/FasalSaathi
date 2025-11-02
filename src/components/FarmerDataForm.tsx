@@ -555,7 +555,7 @@ export function FarmerDataForm({onSuccess}: FarmerDataFormProps) {
                                                 <div>
                                                     <Label htmlFor="images">{t("form.labels.uploadImages")}</Label>
                                                     <p className="text-xs text-muted-foreground mb-2">
-                                                        {t("form.placeholders.uploadImages")}
+                                                        {t("form.steps.images.description")}
                                                     </p>
                                                     <div className="flex items-center justify-center w-full">
                                                         <label
@@ -567,11 +567,13 @@ export function FarmerDataForm({onSuccess}: FarmerDataFormProps) {
                                                                 <UploadCloud
                                                                     className="w-8 h-8 mb-2 text-muted-foreground"/>
                                                                 <p className="text-sm text-muted-foreground">
-                                                                    <span className="font-medium text-primary">Click to upload</span> or
-                                                                    drag and drop
+                                                                    <span className="font-medium text-primary">
+                                                                        {t("form.upload.clickToUpload")}
+                                                                    </span>{' '}
+                                                                    {t("form.upload.orDragDrop")}
                                                                 </p>
                                                                 <p className="text-xs text-muted-foreground mt-1">
-                                                                    PNG, JPG, WEBP (max 5 images, 5MB each)
+                                                                    {t("form.upload.fileTypes")}
                                                                 </p>
                                                             </div>
                                                             <input
@@ -595,8 +597,8 @@ export function FarmerDataForm({onSuccess}: FarmerDataFormProps) {
                                                     {isUploading && (
                                                         <div className="space-y-2">
                                                             <div className="flex justify-between text-sm">
-                                                                <span>Uploading {uploadProgress}%</span>
-                                                                <span>{Math.round((uploadProgress / 100) * (watch("images")?.length || 0))}/{(watch("images")?.length || 0)}</span>
+                                                                <span>{t("form.upload.uploading")} {uploadProgress}%</span>
+                                                                <span>{Math.round((uploadProgress / 100) * (watch("images")?.length || 0))} {t("form.upload.of")} {(watch("images")?.length || 0)}</span>
                                                             </div>
                                                             <div
                                                                 className="h-2 w-full bg-muted rounded-full overflow-hidden">
