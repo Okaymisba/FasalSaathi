@@ -5,6 +5,7 @@ import {Navbar} from "@/components/Navbar";
 import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs";
 import {BarChart3, Sprout} from "lucide-react";
 import {useTranslation} from "react-i18next";
+import {Link} from "react-router-dom";
 
 const Index = () => {
     const [refreshKey, setRefreshKey] = useState(0);
@@ -33,7 +34,7 @@ const Index = () => {
                 </header>
 
                 <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-                    <TabsList className="grid w-full max-w-md mx-auto grid-cols-2 mb-8">
+                    <TabsList className="grid w-full max-w-2xl mx-auto grid-cols-3 mb-8">
                         <TabsTrigger value="submit" className="flex items-center gap-2">
                             <Sprout className="h-4 w-4"/>
                             {t("tabs.submit")}
@@ -41,6 +42,12 @@ const Index = () => {
                         <TabsTrigger value="analytics" className="flex items-center gap-2">
                             <BarChart3 className="h-4 w-4"/>
                             {t("tabs.analytics")}
+                        </TabsTrigger>
+                        <TabsTrigger value="leaderboard" className="flex items-center gap-2" asChild>
+                            <Link to="/leaderboard">
+                                <BarChart3 className="h-4 w-4"/>
+                                {t("tabs.leaderboard")}
+                            </Link>
                         </TabsTrigger>
                     </TabsList>
 

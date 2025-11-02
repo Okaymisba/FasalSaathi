@@ -1,4 +1,4 @@
-import {Link, useNavigate} from "react-router-dom";
+import {useNavigate} from "react-router-dom";
 import {LogOut, Sprout} from "lucide-react";
 import {useAuth} from "@/hooks/useAuth";
 import {toast} from "sonner";
@@ -41,67 +41,59 @@ export function Navbar() {
                     </div>
 
                     <div className="flex items-center gap-4">
-                        <div className="hidden md:flex items-center gap-6">
-                            <Link to="/app" className="text-sm font-medium transition-colors hover:text-primary">
-                                {t("nav.dashboard")}
-                            </Link>
-                            <Link to="/leaderboard" className="text-sm font-medium transition-colors hover:text-primary">
-                                {t("nav.leaderboard")}
-                            </Link>
-                        </div>
-                        
-                        <div className="flex items-center gap-3">
-                        <div className="hidden sm:block text-xs text-muted-foreground">{t("language")}</div>
-                        <Select value={currentLng} onValueChange={(v) => i18n.changeLanguage(v)}>
-                            <SelectTrigger className="h-9 w-[110px]">
-                                <SelectValue aria-label={currentLng}>
-                                    {currentLng === "en" && t("languages.en")}
-                                    {currentLng === "ur" && t("languages.ur")}
-                                    {currentLng === "sd" && t("languages.sd")}
-                                </SelectValue>
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="en">{t("languages.en")}</SelectItem>
-                                <SelectItem value="ur">{t("languages.ur")}</SelectItem>
-                                <SelectItem value="sd">{t("languages.sd")}</SelectItem>
-                            </SelectContent>
-                        </Select>
 
-                        {profile && (
-                            <DropdownMenu>
-                                <DropdownMenuTrigger asChild>
-                                    <div className="flex items-center gap-2 cursor-pointer select-none">
-                                        <div className="hidden md:flex flex-col items-end leading-tight">
+                        <div className="flex items-center gap-3">
+                            <div className="hidden sm:block text-xs text-muted-foreground">{t("language")}</div>
+                            <Select value={currentLng} onValueChange={(v) => i18n.changeLanguage(v)}>
+                                <SelectTrigger className="h-9 w-[110px]">
+                                    <SelectValue aria-label={currentLng}>
+                                        {currentLng === "en" && t("languages.en")}
+                                        {currentLng === "ur" && t("languages.ur")}
+                                        {currentLng === "sd" && t("languages.sd")}
+                                    </SelectValue>
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="en">{t("languages.en")}</SelectItem>
+                                    <SelectItem value="ur">{t("languages.ur")}</SelectItem>
+                                    <SelectItem value="sd">{t("languages.sd")}</SelectItem>
+                                </SelectContent>
+                            </Select>
+
+                            {profile && (
+                                <DropdownMenu>
+                                    <DropdownMenuTrigger asChild>
+                                        <div className="flex items-center gap-2 cursor-pointer select-none">
+                                            <div className="hidden md:flex flex-col items-end leading-tight">
                                             <span
                                                 className="text-sm font-medium max-w-[160px] truncate">{profile.name}</span>
-                                            <span
-                                                className="text-xs text-muted-foreground max-w-[160px] truncate">{profile.province}</span>
+                                                <span
+                                                    className="text-xs text-muted-foreground max-w-[160px] truncate">{profile.province}</span>
+                                            </div>
+                                            <Avatar>
+                                                <AvatarFallback>
+                                                    {profile.name?.split(" ").map((n: string) => n[0]).slice(0, 2).join("") || "U"}
+                                                </AvatarFallback>
+                                            </Avatar>
                                         </div>
-                                        <Avatar>
-                                            <AvatarFallback>
-                                                {profile.name?.split(" ").map((n: string) => n[0]).slice(0, 2).join("") || "U"}
-                                            </AvatarFallback>
-                                        </Avatar>
-                                    </div>
-                                </DropdownMenuTrigger>
-                                <DropdownMenuContent align="end" className="w-56">
-                                    <DropdownMenuLabel className="font-normal">
-                                        <div className="flex flex-col space-y-1">
-                                            <p className="text-sm font-medium leading-none">{profile.name}</p>
-                                            <p className="text-xs leading-none text-muted-foreground">{profile.province}</p>
-                                        </div>
-                                    </DropdownMenuLabel>
-                                    <DropdownMenuSeparator/>
-                                    <DropdownMenuItem onSelect={(e) => {
-                                        e.preventDefault();
-                                        handleSignOut();
-                                    }}>
-                                        <LogOut className="mr-2 h-4 w-4"/>
-                                        <span>{t("logout")}</span>
-                                    </DropdownMenuItem>
-                                </DropdownMenuContent>
-                            </DropdownMenu>
-                        )}
+                                    </DropdownMenuTrigger>
+                                    <DropdownMenuContent align="end" className="w-56">
+                                        <DropdownMenuLabel className="font-normal">
+                                            <div className="flex flex-col space-y-1">
+                                                <p className="text-sm font-medium leading-none">{profile.name}</p>
+                                                <p className="text-xs leading-none text-muted-foreground">{profile.province}</p>
+                                            </div>
+                                        </DropdownMenuLabel>
+                                        <DropdownMenuSeparator/>
+                                        <DropdownMenuItem onSelect={(e) => {
+                                            e.preventDefault();
+                                            handleSignOut();
+                                        }}>
+                                            <LogOut className="mr-2 h-4 w-4"/>
+                                            <span>{t("logout")}</span>
+                                        </DropdownMenuItem>
+                                    </DropdownMenuContent>
+                                </DropdownMenu>
+                            )}
                         </div>
                     </div>
                 </div>
