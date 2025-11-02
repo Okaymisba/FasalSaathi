@@ -40,7 +40,7 @@ const Landing = () => {
                         <div
                             className="inline-flex items-center justify-center rounded-full border border-border/60 bg-background/70 px-3 py-1 text-xs text-muted-foreground backdrop-blur mb-4">
                             <Sprout className="mr-2 h-4 w-4 text-primary"/>
-                            Sindh Agri Scope
+                            {t("appName")}
                         </div>
                         <h1 className="text-3xl md:text-5xl font-extrabold tracking-tight mb-4 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
                             {t("title")}
