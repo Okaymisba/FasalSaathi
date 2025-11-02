@@ -156,6 +156,14 @@
     "flax": "Flax (Linseed)",
     "teff": "Teff"
   },
+  "chat": {
+    "assistant": "AI Assistant",
+    "welcome": "Ask me anything about agriculture in Sindh!",
+    "placeholder": "Type your message...",
+    "error": "Error sending message. Please try again.",
+    "noResponse": "Sorry, I couldn't process your request. Please try again.",
+    "sending": "Sending..."
+  },
   "form": {
     "submitTitle": "Submit Crop Data",
     "submitDescription": "Enter your farming details for regional insights",
