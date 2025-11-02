@@ -1,5 +1,5 @@
 import {useNavigate} from "react-router-dom";
-import {LogOut, Sprout} from "lucide-react";
+import {LogOut} from "lucide-react";
 import {useAuth} from "@/hooks/useAuth";
 import {toast} from "sonner";
 import {useTranslation} from "react-i18next";
@@ -35,7 +35,11 @@ export function Navbar() {
                         onClick={() => navigate('/')}
                         className="flex items-center gap-2 hover:opacity-80 transition-opacity"
                     >
-                        <Sprout className="h-6 w-6 text-primary"/>
+                        <img
+                            src="/favicon.png"
+                            alt="FasalSaathi Logo"
+                            className="h-6 w-6 object-contain"
+                        />
                         <div className="flex flex-col items-start">
                             <span className="font-bold">{t('appName')}</span>
                             <p className="text-xs text-muted-foreground leading-none">{t("tagline")}</p>
