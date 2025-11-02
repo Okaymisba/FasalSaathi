@@ -230,7 +230,7 @@ export function FarmerDataForm({onSuccess}: FarmerDataFormProps) {
                             <span className="font-medium">{t("form.submittingFor")}</span>
                             <span className="font-semibold text-primary flex items-center">
                                 <span className="inline-block w-1 h-1 rounded-full bg-primary/60 mr-1.5"></span>
-                                {profile.province} • {profile.district}
+                                {profile.district}, {profile.province}
                             </span>
                         </div>
                     )}
