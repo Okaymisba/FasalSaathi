@@ -46,6 +46,9 @@ export function AnalyticsDashboard({refreshKey}: AnalyticsDashboardProps) {
     const [selectedProvince, setSelectedProvince] = useState<string | null>(null);
     const [selectedDistrict, setSelectedDistrict] = useState<string>("All");
     const [selectedCrop, setSelectedCrop] = useState<string>("All");
+    const [pendingProvince, setPendingProvince] = useState<string | null>(null);
+    const [pendingDistrict, setPendingDistrict] = useState<string>("All");
+    const [pendingCrop, setPendingCrop] = useState<string>("All");
     const [showFilters, setShowFilters] = useState<boolean>(false);
     const filtersContentRef = useRef<HTMLDivElement | null>(null);
     const {t} = useTranslation("dashboard");
@@ -80,7 +83,25 @@ export function AnalyticsDashboard({refreshKey}: AnalyticsDashboardProps) {
         }
     }, [refreshKey, profile]);
 
-    // refetch analytics whenever filters change
+    // Function to apply the selected filters
+    const applyFilters = () => {
+        setSelectedProvince(pendingProvince);
+        setSelectedDistrict(pendingDistrict);
+        setSelectedCrop(pendingCrop);
+    };
+
+    // Reset pending filters when closing the filters panel
+    const toggleFilters = () => {
+        if (showFilters) {
+            // Reset pending filters to current selected values when closing
+            setPendingProvince(selectedProvince);
+            setPendingDistrict(selectedDistrict);
+            setPendingCrop(selectedCrop);
+        }
+        setShowFilters(!showFilters);
+    };
+
+    // refetch analytics only when selected filters change (via applyFilters)
     useEffect(() => {
         if (profile) {
             fetchAnalytics();
@@ -88,14 +109,14 @@ export function AnalyticsDashboard({refreshKey}: AnalyticsDashboardProps) {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [selectedProvince, selectedDistrict, selectedCrop]);
 
-    // when province changes, refresh district options
+    // when pending province changes, refresh district options for the dropdown
     useEffect(() => {
-        if (!selectedProvince) return;
-        fetchDistrictOptions(selectedProvince);
-        // reset district selection to All when province changes
-        setSelectedDistrict("All");
+        if (!pendingProvince) return;
+        fetchDistrictOptions(pendingProvince);
+        // reset pending district selection to All when province changes
+        setPendingDistrict("All");
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [selectedProvince]);
+    }, [pendingProvince]);
 
     const fetchFilterOptions = async () => {
         try {
@@ -118,7 +139,7 @@ export function AnalyticsDashboard({refreshKey}: AnalyticsDashboardProps) {
             setCrops(Array.from(cropSet).sort());
 
             // initialize districts based on selected or profile province
-            const baseProvince = selectedProvince ?? profile?.province ?? null;
+            const baseProvince = pendingProvince ?? selectedProvince ?? profile?.province ?? null;
             if (baseProvince) {
                 const distForProvince = rows
                     ?.filter((r: any) => r.province === baseProvince && r.district)
