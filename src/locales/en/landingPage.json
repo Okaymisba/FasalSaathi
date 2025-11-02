@@ -1,10 +1,10 @@
 {
-  "title": "Welcome to Sindh Agri Scope",
+  "title": "Welcome to FasalSaathi",
   "subtitle": "Collect crop data, visualize provincial insights, and support smarter agricultural decisions across Sindh.",
   "primaryCta": "Get Started",
   "secondaryCta": "Explore Features",
-  "featuresTitle": "Why Sindh Agri Scope",
-  "featuresSubtitle": "Built for field officers, researchers, and policymakers.",
+  "featuresTitle": "Why FasalSaathi",
+  "featuresSubtitle": "Built for farmers, field officers, researchers, and policymakers.",
   "features": {
     "dataCollection": {
       "title": "Simple Data Collection",
