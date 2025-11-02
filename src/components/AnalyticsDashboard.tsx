@@ -134,12 +134,26 @@ export function AnalyticsDashboard({refreshKey}: AnalyticsDashboardProps) {
 
     const fetchDistrictOptions = async (province: string) => {
         try {
-            const {data: rows, error} = await supabase
+            let query = supabase
                 .from("farmer_data")
-                .select("district,province")
-                .eq("province", province);
+                .select('district')
+                .not('district', 'is', null);
+
+            if (province && province !== 'All') {
+                query = query.eq('province', province);
+            }
+
+            const {data: rows, error} = await query
+                .select("district, province");
+
             if (error) throw error;
-            const dists = Array.from(new Set((rows || []).map((r: any) => r.district).filter(Boolean))).sort();
+
+            const dists = Array.from(new Set(
+                (rows || [])
+                    .map((r: any) => r.district)
+                    .filter(Boolean)
+            )).sort();
+
             setDistricts(dists);
         } catch (e) {
             console.error("Error fetching district options:", e);
