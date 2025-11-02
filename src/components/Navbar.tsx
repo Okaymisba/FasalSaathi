@@ -1,4 +1,4 @@
-import {useNavigate} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 import {LogOut, Sprout} from "lucide-react";
 import {useAuth} from "@/hooks/useAuth";
 import {toast} from "sonner";
@@ -40,7 +40,17 @@ export function Navbar() {
                         </div>
                     </div>
 
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-4">
+                        <div className="hidden md:flex items-center gap-6">
+                            <Link to="/app" className="text-sm font-medium transition-colors hover:text-primary">
+                                {t("nav.dashboard")}
+                            </Link>
+                            <Link to="/leaderboard" className="text-sm font-medium transition-colors hover:text-primary">
+                                {t("nav.leaderboard")}
+                            </Link>
+                        </div>
+                        
+                        <div className="flex items-center gap-3">
                         <div className="hidden sm:block text-xs text-muted-foreground">{t("language")}</div>
                         <Select value={currentLng} onValueChange={(v) => i18n.changeLanguage(v)}>
                             <SelectTrigger className="h-9 w-[110px]">
@@ -92,6 +102,7 @@ export function Navbar() {
                                 </DropdownMenuContent>
                             </DropdownMenu>
                         )}
+                        </div>
                     </div>
                 </div>
             </div>

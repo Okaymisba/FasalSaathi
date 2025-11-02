@@ -12,6 +12,7 @@
   "nav": {
     "home": "Home",
     "dashboard": "Dashboard",
-    "farmers": "Farmers"
+    "farmers": "Farmers",
+    "leaderboard": "Leaderboard"
   }
 }
