@@ -11,7 +11,7 @@ import {Checkbox} from "@/components/ui/checkbox";
 import {supabase} from "@/integrations/supabase/client";
 import {useAuth} from "@/hooks/useAuth";
 import {toast} from "sonner";
-import {Loader2, Sprout} from "lucide-react";
+import {Loader2, Sprout, UploadCloud, X} from "lucide-react";
 import {useTranslation} from "react-i18next";
 
 type FormData = {
@@ -20,6 +20,7 @@ type FormData = {
     harvested_amount: string;
     wastage: string;
     reason: string;
+    images: FileList | null;
     attestation: boolean;
 };
 
@@ -67,6 +68,9 @@ export function FarmerDataForm({onSuccess}: FarmerDataFormProps) {
     const [currentStep, setCurrentStep] = useState(0);
     const [showIntro, setShowIntro] = useState(true);
     const [isForward, setIsForward] = useState(true);
+    const [uploadProgress, setUploadProgress] = useState<number>(0);
+    const [isUploading, setIsUploading] = useState(false);
+    const [previewUrls, setPreviewUrls] = useState<string[]>([]);
     const {profile, user} = useAuth();
     const {t} = useTranslation("dashboard");
 
@@ -95,6 +99,17 @@ export function FarmerDataForm({onSuccess}: FarmerDataFormProps) {
                 {message: t("form.validation.wastageRange")}
             ),
         reason: z.string().min(1, t("form.validation.reasonRequired")),
+        images: z.any()
+            .refine(files => !files || files.length === 0 || files.length <= 5, {
+                message: t("form.validation.maxImages")
+            })
+            .refine(
+                files => !files || files.length === 0 || Array.from(files).every(file => {
+                    const validTypes = ['image/jpeg', 'image/png', 'image/webp'];
+                    return validTypes.includes((file as File).type);
+                }),
+                {message: t("form.validation.invalidImageType")}
+            ),
         attestation: z.boolean().refine((val) => val === true, {
             message: t("form.validation.attestationConfirm"),
         }),
@@ -146,6 +161,11 @@ export function FarmerDataForm({onSuccess}: FarmerDataFormProps) {
             description: t("form.steps.reason.description"),
         },
         {
+            key: "images",
+            title: t("form.steps.images.title"),
+            description: t("form.steps.images.description"),
+        },
+        {
             key: "attestation",
             title: t("form.steps.attestation.title"),
             description: t("form.steps.attestation.description"),
@@ -171,6 +191,63 @@ export function FarmerDataForm({onSuccess}: FarmerDataFormProps) {
         setCurrentStep((s) => Math.max(s - 1, 0));
     };
 
+    const uploadImages = async (files: FileList): Promise<string[]> => {
+        if (!files || files.length === 0) return [];
+        if (!user) {
+            throw new Error("User not authenticated");
+        }
+
+        setIsUploading(true);
+        setUploadProgress(0);
+
+        try {
+            const paths: string[] = [];
+            const totalFiles = files.length;
+
+            for (let i = 0; i < totalFiles; i++) {
+                const file = files[i];
+
+                // Check file size (5MB max)
+                if (file.size > 5 * 1024 * 1024) {
+                    throw new Error(`File ${file.name} is too large. Maximum size is 5MB.`);
+                }
+
+                // Generate a unique filename with user ID as the first folder
+                const fileExt = file.name.split('.').pop();
+                const fileName = `${user.id}/${Date.now()}-${Math.random().toString(36).substring(2, 15)}.${fileExt}`;
+
+                // Upload the file
+                const {error: uploadError} = await supabase.storage
+                    .from('produced_crop_images')
+                    .upload(fileName, file, {
+                        cacheControl: '3600',
+                        upsert: false,
+                        contentType: file.type
+                    });
+
+                if (uploadError) {
+                    console.error('Upload error:', uploadError);
+                    throw new Error(`Failed to upload ${file.name}: ${uploadError.message}`);
+                }
+
+                // Get the public URL
+                const {data: {publicUrl}} = supabase.storage
+                    .from('produced_crop_images')
+                    .getPublicUrl(fileName);
+
+                paths.push(publicUrl);
+                setUploadProgress(Math.round(((i + 1) / totalFiles) * 100));
+            }
+
+            return paths;
+        } catch (error) {
+            console.error('Error in uploadImages:', error);
+            throw error;
+        } finally {
+            setIsUploading(false);
+        }
+    };
+
     const onSubmit = async (data: FormData) => {
         if (!profile || !user) {
             toast.error(t("form.toasts.authRequired.title"), {
@@ -181,6 +258,13 @@ export function FarmerDataForm({onSuccess}: FarmerDataFormProps) {
 
         setIsSubmitting(true);
         try {
+            let imagePaths: string[] = [];
+
+            // Upload images if any
+            if (data.images && data.images.length > 0) {
+                imagePaths = await uploadImages(data.images);
+            }
+
             const {error} = await supabase.from("farmer_data").insert({
                 farmer_id: user.id,
                 province: profile.province,
@@ -190,6 +274,7 @@ export function FarmerDataForm({onSuccess}: FarmerDataFormProps) {
                 yield: Number(data.harvested_amount),
                 wastage: Number(data.wastage),
                 reason: data.reason,
+                image_paths: imagePaths,
             } as any);
 
             if (error) throw error;
@@ -197,6 +282,9 @@ export function FarmerDataForm({onSuccess}: FarmerDataFormProps) {
             toast.success(t("form.toasts.submitSuccess.title"), {
                 description: t("form.toasts.submitSuccess.desc"),
             });
+
+            // Reset form and previews
+            setPreviewUrls([]);
             reset();
             onSuccess();
         } catch (error) {
@@ -398,6 +486,118 @@ export function FarmerDataForm({onSuccess}: FarmerDataFormProps) {
                                             </div>
                                         )}
 
+                                        {steps[currentStep].key === "images" && (
+                                            <div className="space-y-4">
+                                                <div>
+                                                    <Label htmlFor="images">{t("form.labels.uploadImages")}</Label>
+                                                    <p className="text-xs text-muted-foreground mb-2">
+                                                        {t("form.placeholders.uploadImages")}
+                                                    </p>
+                                                    <div className="flex items-center justify-center w-full">
+                                                        <label
+                                                            htmlFor="dropzone-file"
+                                                            className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-lg cursor-pointer bg-muted/20 hover:bg-muted/30 transition-colors"
+                                                        >
+                                                            <div
+                                                                className="flex flex-col items-center justify-center pt-5 pb-6 px-4 text-center">
+                                                                <UploadCloud
+                                                                    className="w-8 h-8 mb-2 text-muted-foreground"/>
+                                                                <p className="text-sm text-muted-foreground">
+                                                                    <span className="font-medium text-primary">Click to upload</span> or
+                                                                    drag and drop
+                                                                </p>
+                                                                <p className="text-xs text-muted-foreground mt-1">
+                                                                    PNG, JPG, WEBP (max 5 images, 5MB each)
+                                                                </p>
+                                                            </div>
+                                                            <input
+                                                                id="dropzone-file"
+                                                                type="file"
+                                                                multiple
+                                                                accept="image/png, image/jpeg, image/webp"
+                                                                className="hidden"
+                                                                onChange={(e) => {
+                                                                    const files = e.target.files;
+                                                                    if (files) {
+                                                                        setValue("images", files, {shouldValidate: true});
+
+                                                                        // Create preview URLs
+                                                                        const urls = [];
+                                                                        for (let i = 0; i < Math.min(files.length, 5); i++) {
+                                                                            urls.push(URL.createObjectURL(files[i]));
+                                                                        }
+                                                                        setPreviewUrls(urls);
+                                                                    }
+                                                                }}
+                                                            />
+                                                        </label>
+                                                    </div>
+                                                    {errors.images && (
+                                                        <p className="text-sm text-destructive mt-2">{errors.images.message as string}</p>
+                                                    )}
+                                                </div>
+
+                                                {isUploading && (
+                                                    <div className="space-y-2">
+                                                        <div className="flex justify-between text-sm">
+                                                            <span>Uploading {uploadProgress}%</span>
+                                                            <span>{Math.round((uploadProgress / 100) * (watch("images")?.length || 0))}/{(watch("images")?.length || 0)}</span>
+                                                        </div>
+                                                        <div
+                                                            className="h-2 w-full bg-muted rounded-full overflow-hidden">
+                                                            <div
+                                                                className="h-full bg-primary transition-all duration-300"
+                                                                style={{width: `${uploadProgress}%`}}
+                                                            />
+                                                        </div>
+                                                    </div>
+                                                )}
+
+                                                {previewUrls.length > 0 && (
+                                                    <div className="mt-4">
+                                                        <h4 className="text-sm font-medium mb-2">Preview
+                                                            ({previewUrls.length})</h4>
+                                                        <div className="flex flex-wrap gap-2">
+                                                            {previewUrls.map((url, index) => (
+                                                                <div key={index} className="relative group">
+                                                                    <div
+                                                                        className="w-20 h-20 rounded-md overflow-hidden border border-muted">
+                                                                        <img
+                                                                            src={url}
+                                                                            alt={`Preview ${index + 1}`}
+                                                                            className="w-full h-full object-cover"
+                                                                        />
+                                                                    </div>
+                                                                    <button
+                                                                        type="button"
+                                                                        onClick={() => {
+                                                                            const newPreviewUrls = [...previewUrls];
+                                                                            newPreviewUrls.splice(index, 1);
+                                                                            setPreviewUrls(newPreviewUrls);
+
+                                                                            // Update the files list
+                                                                            const dataTransfer = new DataTransfer();
+                                                                            const input = document.getElementById('dropzone-file') as HTMLInputElement;
+                                                                            if (input.files) {
+                                                                                const files = Array.from(input.files);
+                                                                                files.splice(index, 1);
+                                                                                files.forEach(file => dataTransfer.items.add(file));
+                                                                                input.files = dataTransfer.files;
+                                                                                setValue("images", dataTransfer.files as any, {shouldValidate: true});
+                                                                            }
+                                                                        }}
+                                                                        className="absolute -top-2 -right-2 bg-destructive text-destructive-foreground rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                                                                    >
+                                                                        <X className="h-3 w-3"/>
+                                                                    </button>
+                                                                </div>
+                                                            ))}
+                                                        </div>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        )}
+
                                         {steps[currentStep].key === "attestation" && (
                                             <div className="space-y-2">
                                                 <Label htmlFor="attestation">{t("form.labels.attestation")}</Label>
@@ -410,8 +610,8 @@ export function FarmerDataForm({onSuccess}: FarmerDataFormProps) {
                                                         onCheckedChange={(val) => setValue("attestation", !!val, {shouldValidate: true})}
                                                     />
                                                     <span className="text-sm leading-6">
-                                        {t("form.attestation.text")}
-                                    </span>
+                        {t("form.attestation.text")}
+                    </span>
                                                 </div>
                                                 {errors.attestation && (
                                                     <p className="text-sm text-destructive">{errors.attestation.message}</p>
