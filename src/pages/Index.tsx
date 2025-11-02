@@ -53,7 +53,7 @@ const Index = () => {
                         </TabsTrigger>
                         <TabsTrigger value="ai-chat" className="flex items-center gap-2">
                             <MessageSquare className="h-4 w-4"/>
-                            AI Chat
+                            {t("tabs.AIChat")}
                         </TabsTrigger>
                     </TabsList>
 

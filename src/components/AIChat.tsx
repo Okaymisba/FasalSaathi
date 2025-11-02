@@ -14,7 +14,7 @@ type Message = {
 };
 
 export const AIChat = () => {
-    const {t, i18n} = useTranslation();
+    const {t, i18n} = useTranslation("dashboard");
     const {user} = useAuth();
     const [messages, setMessages] = useState<Message[]>([]);
     const [input, setInput] = useState('');
