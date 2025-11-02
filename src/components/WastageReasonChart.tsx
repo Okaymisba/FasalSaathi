@@ -21,6 +21,13 @@ const COLORS = [
 
 export function WastageReasonChart({data}: WastageReasonChartProps) {
     const {t} = useTranslation("dashboard");
+    
+    // Map the data to include translated reasons
+    const translatedData = data.map(item => ({
+        ...item,
+        translatedReason: t(`wastageReasons.${item.reason}`, item.reason)
+    }));
+    
     return (
         <Card className="shadow-[var(--shadow-card)] border-border/50">
             <CardHeader>
@@ -31,18 +38,19 @@ export function WastageReasonChart({data}: WastageReasonChartProps) {
                 <ResponsiveContainer width="100%" height={300}>
                     <PieChart>
                         <Pie
-                            data={data}
+                            data={translatedData}
                             cx="50%"
                             cy="50%"
                             labelLine={false}
-                            label={({reason, percent}) =>
-                                `${reason}: ${(percent * 100).toFixed(0)}%`
+                            label={({translatedReason, percent}) =>
+                                `${translatedReason}: ${(percent * 100).toFixed(0)}%`
                             }
                             outerRadius={100}
                             fill="#8884d8"
                             dataKey="count"
+                            nameKey="translatedReason"
                         >
-                            {data.map((entry, index) => (
+                            {translatedData.map((_, index) => (
                                 <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]}/>
                             ))}
                         </Pie>
