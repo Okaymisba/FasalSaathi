@@ -187,12 +187,17 @@
         "title": "Reason for Wastage",
         "description": "Choose the main reason for wastage. This helps identify support needs."
       },
+      "images": {
+        "title": "Crop Photos",
+        "description": "Upload photos of your harvested crops. This helps verify and document your submission."
+      },
       "attestation": {
         "title": "Confirm Accuracy",
         "description": "Please confirm the information you provided is correct to the best of your knowledge."
       }
     },
     "labels": {
+      "uploadImages": "Upload Crop Photos",
       "crop": "Crop Type *",
       "area": "Area Cultivated (acres) *",
       "harvested_amount": "Harvested Amount (tons) *",
@@ -205,7 +210,8 @@
       "area": "e.g., 10.5",
       "harvested_amount": "e.g., 25.0",
       "wastage": "e.g., 5.0",
-      "selectReason": "Select reason"
+      "selectReason": "Select reason",
+      "uploadImages": "Click to upload or drag and drop images here"
     },
     "reasons": {
       "weather": "Weather",
@@ -237,12 +243,21 @@
         "desc": "Please try again later."
       }
     },
+    "upload": {
+      "clickToUpload": "Click to upload",
+      "orDragDrop": "or drag and drop",
+      "fileTypes": "PNG, JPG, WEBP (max 5 images, 5MB each)",
+      "uploading": "Uploading",
+      "of": "of"
+    },
     "validation": {
       "cropRequired": "Please select a crop type",
       "areaPositive": "Area must be greater than 0",
       "harvestedNonNegative": "Harvested amount must be 0 or greater",
       "wastageRange": "Wastage must be between 0 and 100",
       "reasonRequired": "Please select a reason",
+      "maxImages": "You can upload up to 5 images",
+      "invalidImageType": "Only JPG, PNG, and WebP images are supported",
       "attestationConfirm": "You must confirm the data is accurate"
     }
   }
