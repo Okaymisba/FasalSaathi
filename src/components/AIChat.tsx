@@ -5,6 +5,7 @@ import {Input} from '@/components/ui/input';
 import {useTranslation} from 'react-i18next';
 import {useAuth} from "@/hooks/useAuth";
 import {toast} from "@/components/ui/use-toast";
+import ReactMarkdown from 'react-markdown';
 
 type Message = {
     id: string;
@@ -121,7 +122,9 @@ export const AIChat = () => {
                                         ? 'bg-primary text-primary-foreground rounded-br-none'
                                         : 'bg-muted rounded-bl-none'}`}
                                 >
-                                    <p className="whitespace-pre-wrap">{message.content}</p>
+                                    <div className="prose prose-sm max-w-none">
+                                        <ReactMarkdown>{message.content}</ReactMarkdown>
+                                    </div>
                                     <p className="text-xs opacity-70 mt-1">
                                         {message.timestamp.toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'})}
                                     </p>
