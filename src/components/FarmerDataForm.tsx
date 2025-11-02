@@ -152,14 +152,21 @@ export function FarmerDataForm({onSuccess}: FarmerDataFormProps) {
             ),
         reason: z.string().min(1, t("form.validation.reasonRequired")),
         images: z.any()
-            .refine(files => !files || files.length === 0 || files.length <= 5, {
+            .refine(files => files && files.length > 0, {
+                message: t("form.validation.atLeastOneImage")
+            })
+            .refine(files => files && files.length <= 5, {
                 message: t("form.validation.maxImages")
             })
             .refine(
-                files => !files || files.length === 0 || Array.from(files).every(file => {
-                    const validTypes = ['image/jpeg', 'image/png', 'image/webp'];
-                    return validTypes.includes((file as File).type);
-                }),
+                files => {
+                    if (!files || files.length === 0) return false;
+                    const fileArray = Array.isArray(files) ? files : Array.from(files);
+                    return fileArray.every(file => {
+                        const validTypes = ['image/jpeg', 'image/png', 'image/webp'];
+                        return file && file.type && validTypes.includes(file.type);
+                    });
+                },
                 {message: t("form.validation.invalidImageType")}
             ),
         attestation: z.boolean().refine((val) => val === true, {
