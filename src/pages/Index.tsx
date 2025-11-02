@@ -6,7 +6,7 @@ import {RegionalAIAnalytics} from "@/components/RegionalAIAnalytics";
 import {AIChat} from "@/components/AIChat";
 import {Navbar} from "@/components/Navbar";
 import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs";
-import {BarChart3, MessageSquare, Sprout, Brain} from "lucide-react";
+import {BarChart3, Brain, MessageSquare, Sprout} from "lucide-react";
 import {useTranslation} from "react-i18next";
 import {Link} from "react-router-dom";
 
@@ -37,30 +37,56 @@ const Index = () => {
                 </header>
 
                 <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-                    <TabsList className="grid w-full max-w-3xl mx-auto grid-cols-5 mb-8">
-                        <TabsTrigger value="submit" className="flex items-center gap-2">
-                            <Sprout className="h-4 w-4"/>
-                            {t("tabs.submit")}
-                        </TabsTrigger>
-                        <TabsTrigger value="ai-analytics" className="flex items-center gap-2">
-                            <Brain className="h-4 w-4"/>
-                            {t("tabs.aiAnalytics")}
-                        </TabsTrigger>
-                        <TabsTrigger value="analytics" className="flex items-center gap-2">
-                            <BarChart3 className="h-4 w-4"/>
-                            {t("tabs.analytics")}
-                        </TabsTrigger>
-                        <TabsTrigger value="leaderboard" className="flex items-center gap-2" asChild>
-                            <Link to="/leaderboard">
-                                <BarChart3 className="h-4 w-4"/>
-                                {t("tabs.leaderboard")}
-                            </Link>
-                        </TabsTrigger>
-                        <TabsTrigger value="ai-chat" className="flex items-center gap-2">
-                            <MessageSquare className="h-4 w-4"/>
-                            {t("tabs.AIChat")}
-                        </TabsTrigger>
-                    </TabsList>
+                    <div className="relative">
+                        <div
+                            className="absolute inset-y-0 left-0 w-6 bg-gradient-to-r from-background to-transparent z-10 pointer-events-none"/>
+                        <div className="overflow-x-auto pb-4 scrollbar-hide">
+                            <TabsList
+                                className="w-full max-w-4xl mx-auto flex gap-1 px-1 py-1.5 bg-muted/30 rounded-lg border border-border/50 min-w-max">
+                                <TabsTrigger
+                                    value="submit"
+                                    className="flex-1 flex flex-col sm:flex-row items-center gap-1.5 text-xs sm:text-sm px-3 py-2.5 rounded-md transition-all duration-200 data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:ring-1 data-[state=active]:ring-border/30 hover:bg-muted/50"
+                                >
+                                    <Sprout className="h-3.5 w-3.5 sm:h-4 sm:w-4 flex-shrink-0"/>
+                                    <span className="whitespace-nowrap">{t("tabs.submit")}</span>
+                                </TabsTrigger>
+                                <TabsTrigger
+                                    value="ai-analytics"
+                                    className="flex-1 flex flex-col sm:flex-row items-center gap-1.5 text-xs sm:text-sm px-3 py-2.5 rounded-md transition-all duration-200 data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:ring-1 data-[state=active]:ring-border/30 hover:bg-muted/50"
+                                >
+                                    <Brain className="h-3.5 w-3.5 sm:h-4 sm:w-4 flex-shrink-0"/>
+                                    <span className="whitespace-nowrap">{t("tabs.aiAnalytics")}</span>
+                                </TabsTrigger>
+                                <TabsTrigger
+                                    value="analytics"
+                                    className="flex-1 flex flex-col sm:flex-row items-center gap-1.5 text-xs sm:text-sm px-3 py-2.5 rounded-md transition-all duration-200 data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:ring-1 data-[state=active]:ring-border/30 hover:bg-muted/50"
+                                >
+                                    <BarChart3 className="h-3.5 w-3.5 sm:h-4 sm:w-4 flex-shrink-0"/>
+                                    <span className="whitespace-nowrap">{t("tabs.analytics")}</span>
+                                </TabsTrigger>
+                                <TabsTrigger
+                                    value="leaderboard"
+                                    className="flex-1 flex flex-col sm:flex-row items-center gap-1.5 text-xs sm:text-sm px-3 py-2.5 rounded-md transition-all duration-200 data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:ring-1 data-[state=active]:ring-border/30 hover:bg-muted/50"
+                                    asChild
+                                >
+                                    <Link to="/leaderboard"
+                                          className="flex flex-col sm:flex-row items-center gap-1.5 w-full">
+                                        <BarChart3 className="h-3.5 w-3.5 sm:h-4 sm:w-4 flex-shrink-0"/>
+                                        <span className="whitespace-nowrap">{t("tabs.leaderboard")}</span>
+                                    </Link>
+                                </TabsTrigger>
+                                <TabsTrigger
+                                    value="ai-chat"
+                                    className="flex-1 flex flex-col sm:flex-row items-center gap-1.5 text-xs sm:text-sm px-3 py-2.5 rounded-md transition-all duration-200 data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:ring-1 data-[state=active]:ring-border/30 hover:bg-muted/50"
+                                >
+                                    <MessageSquare className="h-3.5 w-3.5 sm:h-4 sm:w-4 flex-shrink-0"/>
+                                    <span className="whitespace-nowrap">{t("tabs.AIChat")}</span>
+                                </TabsTrigger>
+                            </TabsList>
+                        </div>
+                        <div
+                            className="absolute inset-y-0 right-0 w-6 bg-gradient-to-l from-background to-transparent z-10 pointer-events-none"/>
+                    </div>
 
                     <TabsContent value="submit" className="mt-0">
                         <div className="max-w-3xl mx-auto">
