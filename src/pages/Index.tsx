@@ -2,10 +2,11 @@ import {useState} from "react";
 import {FarmerDataForm} from "@/components/FarmerDataForm";
 import {AnalyticsDashboard} from "@/components/AnalyticsDashboard";
 import {AIInsights} from "@/components/AIInsights";
+import {RegionalAIAnalytics} from "@/components/RegionalAIAnalytics";
 import {AIChat} from "@/components/AIChat";
 import {Navbar} from "@/components/Navbar";
 import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs";
-import {BarChart3, MessageSquare, Sprout} from "lucide-react";
+import {BarChart3, MessageSquare, Sprout, Brain} from "lucide-react";
 import {useTranslation} from "react-i18next";
 import {Link} from "react-router-dom";
 
@@ -36,10 +37,14 @@ const Index = () => {
                 </header>
 
                 <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-                    <TabsList className="grid w-full max-w-2xl mx-auto grid-cols-4 mb-8">
+                    <TabsList className="grid w-full max-w-3xl mx-auto grid-cols-5 mb-8">
                         <TabsTrigger value="submit" className="flex items-center gap-2">
                             <Sprout className="h-4 w-4"/>
                             {t("tabs.submit")}
+                        </TabsTrigger>
+                        <TabsTrigger value="ai-analytics" className="flex items-center gap-2">
+                            <Brain className="h-4 w-4"/>
+                            {t("tabs.aiAnalytics")}
                         </TabsTrigger>
                         <TabsTrigger value="analytics" className="flex items-center gap-2">
                             <BarChart3 className="h-4 w-4"/>
@@ -60,6 +65,12 @@ const Index = () => {
                     <TabsContent value="submit" className="mt-0">
                         <div className="max-w-3xl mx-auto">
                             <FarmerDataForm onSuccess={handleFormSuccess}/>
+                        </div>
+                    </TabsContent>
+
+                    <TabsContent value="ai-analytics" className="mt-0">
+                        <div className="max-w-4xl mx-auto">
+                            <RegionalAIAnalytics/>
                         </div>
                     </TabsContent>
 

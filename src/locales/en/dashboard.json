@@ -8,9 +8,31 @@
   "welcomeSubtitle": "Submit crop data and view provincial analytics",
   "tabs": {
     "submit": "Submit Data",
+    "aiAnalytics": "AI Analytics",
     "analytics": "View Analytics",
     "leaderboard": "Leaderboard",
     "AIChat": "AI Chat"
+  },
+  "regionalAI": {
+    "title": "Regional AI Analytics",
+    "noData": "No AI analytics available for your region yet. Data will appear once regional analysis is complete.",
+    "allCrops": "All Crops",
+    "lastUpdated": "Last updated",
+    "aiSummary": "AI Summary",
+    "avgYield": "Average Yield",
+    "avgWastage": "Average Wastage",
+    "efficiency": "Efficiency",
+    "tons": "tons",
+    "riskLevel": "Risk Assessment",
+    "riskLevels": {
+      "low": "Low risk detected. Continue monitoring your crops regularly.",
+      "medium": "Medium risk. Pay attention to weather and pest conditions.",
+      "high": "High risk alert. Take immediate preventive measures."
+    },
+    "marketTrend": "Market Insights",
+    "fertilizerTip": "Fertilizer Recommendation",
+    "nextCrop": "Next Season Suggestion",
+    "dominantReason": "Main Wastage Cause"
   },
   "analytics": {
     "noData": {
