@@ -9,7 +9,8 @@
   "tabs": {
     "submit": "Submit Data",
     "analytics": "View Analytics",
-    "leaderboard": "Leaderboard"
+    "leaderboard": "Leaderboard",
+    "AIChat": "AI Chat"
   },
   "analytics": {
     "noData": {
@@ -158,11 +159,17 @@
   },
   "chat": {
     "assistant": "AI Assistant",
-    "welcome": "Ask me anything about agriculture in Sindh!",
+    "welcome": "Ask me anything about agriculture in Pakistan!",
     "placeholder": "Type your message...",
     "error": "Error sending message. Please try again.",
     "noResponse": "Sorry, I couldn't process your request. Please try again.",
-    "sending": "Sending..."
+    "sending": "Sending...",
+    "suggestions": [
+      "What are the best crops to grow in my area?",
+      "How can I improve my crop yield?",
+      "What are common pests and diseases for my crops?",
+      "How to manage water efficiently for farming?"
+    ]
   },
   "form": {
     "submitTitle": "Submit Crop Data",
@@ -249,6 +256,10 @@
       "submitting": "Submitting..."
     },
     "toasts": {
+    "messageSent": {
+      "title": "Message sent",
+      "description": "Your message has been sent successfully"
+    },
       "authRequired": {
         "title": "Authentication required",
         "desc": "Please log in to submit data."
