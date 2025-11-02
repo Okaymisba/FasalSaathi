@@ -2,9 +2,10 @@ import {useState} from "react";
 import {FarmerDataForm} from "@/components/FarmerDataForm";
 import {AnalyticsDashboard} from "@/components/AnalyticsDashboard";
 import {AIInsights} from "@/components/AIInsights";
+import {AIChat} from "@/components/AIChat";
 import {Navbar} from "@/components/Navbar";
 import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs";
-import {BarChart3, Sprout} from "lucide-react";
+import {BarChart3, MessageSquare, Sprout} from "lucide-react";
 import {useTranslation} from "react-i18next";
 import {Link} from "react-router-dom";
 
@@ -35,7 +36,7 @@ const Index = () => {
                 </header>
 
                 <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-                    <TabsList className="grid w-full max-w-2xl mx-auto grid-cols-3 mb-8">
+                    <TabsList className="grid w-full max-w-2xl mx-auto grid-cols-4 mb-8">
                         <TabsTrigger value="submit" className="flex items-center gap-2">
                             <Sprout className="h-4 w-4"/>
                             {t("tabs.submit")}
@@ -50,6 +51,10 @@ const Index = () => {
                                 {t("tabs.leaderboard")}
                             </Link>
                         </TabsTrigger>
+                        <TabsTrigger value="ai-chat" className="flex items-center gap-2">
+                            <MessageSquare className="h-4 w-4"/>
+                            AI Chat
+                        </TabsTrigger>
                     </TabsList>
 
                     <TabsContent value="submit" className="mt-0">
@@ -62,6 +67,12 @@ const Index = () => {
                         <div className="space-y-6">
                             <AIInsights/>
                             <AnalyticsDashboard refreshKey={refreshKey}/>
+                        </div>
+                    </TabsContent>
+
+                    <TabsContent value="ai-chat" className="mt-0">
+                        <div className="max-w-4xl mx-auto">
+                            <AIChat/>
                         </div>
                     </TabsContent>
                 </Tabs>
