@@ -449,14 +449,6 @@ export function AnalyticsDashboard({refreshKey}: AnalyticsDashboardProps) {
                             {/* Apply Filters Button */}
                             <div className="col-span-full flex justify-end space-x-3 pt-2">
                                 <Button
-                                    variant="outline"
-                                    size="sm"
-                                    onClick={toggleFilters}
-                                    className="px-4"
-                                >
-                                    {t("common.cancel")}
-                                </Button>
-                                <Button
                                     size="sm"
                                     onClick={() => {
                                         setSelectedProvince(pendingProvince);
@@ -470,10 +462,10 @@ export function AnalyticsDashboard({refreshKey}: AnalyticsDashboardProps) {
                                     {isLoading ? (
                                         <>
                                             <Loader2 className="mr-2 h-4 w-4 animate-spin"/>
-                                            {t("common.applying")}
+                                            {t("analytics.filters.buttons.applying")}
                                         </>
                                     ) : (
-                                        t("common.apply")
+                                        t("analytics.filters.buttons.apply")
                                     )}
                                 </Button>
                             </div>
