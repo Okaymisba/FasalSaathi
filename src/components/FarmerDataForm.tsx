@@ -475,7 +475,9 @@ export function FarmerDataForm({onSuccess}: FarmerDataFormProps) {
                                                     </SelectContent>
                                                 </Select>
                                                 {errors.crop && (
-                                                    <p className="text-sm text-destructive">{errors.crop.message}</p>
+                                                    <p className="text-sm text-destructive">
+                                                        {t("form.validation.cropRequired")}
+                                                    </p>
                                                 )}
                                             </div>
                                         )}
@@ -554,7 +556,9 @@ export function FarmerDataForm({onSuccess}: FarmerDataFormProps) {
                                                     </SelectContent>
                                                 </Select>
                                                 {errors.reason && (
-                                                    <p className="text-sm text-destructive">{errors.reason.message}</p>
+                                                    <p className="text-sm text-destructive">
+                                                        {t("form.validation.reasonRequired")}
+                                                    </p>
                                                 )}
                                             </div>
                                         )}
