@@ -28,14 +28,14 @@ type FormData = {
 const cropKeys = [
     'wheat', 'rice', 'maize', 'barley', 'sorghum', 'millet', 'oats',
     'cotton', 'sugarcane', 'tobacco', 'jute', 'kenaf',
-    'chickpea', 'lentil', 'mungBean', 'blackGram', 'peas', 'cowpea', 'pigeonPea',
-    'rapeseedMustard', 'mustard', 'canola', 'sunflower', 'sesame', 'groundnut', 'soybean', 'safflower', 'castor',
-    'berseem', 'lucerne', 'sorghumSudanGrass', 'guineaGrass', 'maizeFodder',
+    'chickpea', 'lentil', 'mungbean', 'blackgram', 'peas', 'cowpea', 'pigeonpea',
+    'rapeseedmustard', 'mustard', 'canola', 'sunflower', 'sesame', 'groundnut', 'soybean', 'safflower', 'castor',
+    'berseem', 'lucerne', 'sorghumsudangrass', 'guineagrass', 'maizefodder',
     'potato', 'onion', 'tomato', 'chili', 'okra', 'cauliflower', 'cabbage', 'brinjal', 'garlic', 'ginger',
-    'spinach', 'coriander', 'cucumber', 'carrot', 'radish', 'turnip', 'pumpkin', 'bitterGourd', 'bottleGourd',
-    'tinda', 'peasVegetable', 'mango', 'citrus', 'banana', 'dates', 'guava', 'apple', 'apricot', 'peach',
+    'spinach', 'coriander', 'cucumber', 'carrot', 'radish', 'turnip', 'pumpkin', 'bittergourd', 'bottlegourd',
+    'tinda', 'peasvegetable', 'mango', 'citrus', 'banana', 'dates', 'guava', 'apple', 'apricot', 'peach',
     'plum', 'pear', 'pomegranate', 'grapes', 'watermelon', 'muskmelon', 'strawberry', 'turmeric', 'cumin',
-    'fennel', 'fenugreek', 'blackPepper', 'cardamom', 'nigella', 'quinoa', 'buckwheat', 'flax', 'teff'
+    'fennel', 'fenugreek', 'blackpepper', 'cardamom', 'nigella', 'quinoa', 'buckwheat', 'flax', 'teff'
 ] as const;
 
 type CropKey = typeof cropKeys[number];
