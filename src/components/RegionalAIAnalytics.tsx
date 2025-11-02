@@ -100,19 +100,6 @@ export function RegionalAIAnalytics() {
                         </CardTitle>
                     </CardHeader>
                     <CardContent className="pt-6 space-y-4">
-                        {/* AI Summary */}
-                        {data.ai_summary && (
-                            <div className="p-4 rounded-lg bg-primary/5 border border-primary/10">
-                                <div className="flex items-start gap-3">
-                                    <Brain className="h-5 w-5 text-primary mt-0.5 flex-shrink-0"/>
-                                    <div>
-                                        <h4 className="font-semibold text-sm mb-1">{t("regionalAI.aiSummary")}</h4>
-                                        <p className="text-sm text-muted-foreground">{data.ai_summary}</p>
-                                    </div>
-                                </div>
-                            </div>
-                        )}
-
                         {/* Statistics Grid */}
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                             {data.average_yield && (
