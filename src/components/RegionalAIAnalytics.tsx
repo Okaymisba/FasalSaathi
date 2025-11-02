@@ -96,13 +96,8 @@ export function RegionalAIAnalytics() {
                     <CardHeader className="bg-gradient-to-r from-primary/5 to-accent/5">
                         <CardTitle className="flex items-center gap-2">
                             <Sprout className="h-5 w-5 text-primary"/>
-                            {data.crop ? t(`crops.${data.crop.toLowerCase()}`, {defaultValue: data.crop}) : t("regionalAI.allCrops")}
+                            {t("regionalAI.title")}
                         </CardTitle>
-                        {data.last_updated && (
-                            <CardDescription className="text-xs">
-                                {t("regionalAI.lastUpdated")}: {new Date(data.last_updated).toLocaleDateString()}
-                            </CardDescription>
-                        )}
                     </CardHeader>
                     <CardContent className="pt-6 space-y-4">
                         {/* AI Summary */}

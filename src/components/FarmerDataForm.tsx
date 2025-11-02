@@ -1,4 +1,4 @@
-import {useState} from "react";
+import {useMemo, useState} from "react";
 import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -72,6 +72,7 @@ export function FarmerDataForm({onSuccess}: FarmerDataFormProps) {
     const [isUploading, setIsUploading] = useState(false);
     const [previewUrls, setPreviewUrls] = useState<string[]>([]);
     const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
+    const {t} = useTranslation("dashboard");
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const files = e.target.files;
@@ -124,14 +125,16 @@ export function FarmerDataForm({onSuccess}: FarmerDataFormProps) {
         setPreviewUrls(urls);
     };
     const {profile, user} = useAuth();
-    const {t} = useTranslation("dashboard");
 
-    // Get translated crops and wastage reasons
-    const translatedCrops = getTranslatedCrops(t);
-    const translatedWastageReasons = getTranslatedWastageReasons(t);
+    // Get translated crops and wastage reasons with useMemo to update on language change
+    const translatedCrops = useMemo(() => getTranslatedCrops(t), [t]);
+    const translatedWastageReasons = useMemo(() => getTranslatedWastageReasons(t), [t]);
 
     // Sort crops alphabetically by translated label
-    const sortedCrops = [...translatedCrops].sort((a, b) => a.label.localeCompare(b.label));
+    const sortedCrops = useMemo(() =>
+            [...translatedCrops].sort((a, b) => a.label.localeCompare(b.label)),
+        [translatedCrops]
+    );
 
     // Build validation schema with translated messages
     const formSchema = z.object({
