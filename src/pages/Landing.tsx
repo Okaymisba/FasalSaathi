@@ -151,7 +151,7 @@ const Landing = () => {
                             transition={{delay: 0.2, duration: 0.5}}
                         >
                             <Sprout className="mr-2 h-4 w-4 text-primary"/>
-                            {t("appName")} - {t("tagline")}
+                            {t("appName")}
                         </motion.div>
 
                         <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight mb-6 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">

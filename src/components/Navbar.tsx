@@ -26,22 +26,22 @@ export function Navbar() {
     };
 
     const currentLng = (i18n.resolvedLanguage || i18n.language || "en").split("-")[0];
-
     return (
         <nav
             className="sticky top-0 z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b border-border/50">
             <div className="container mx-auto px-4 py-3">
                 <div className="flex items-center justify-between gap-4">
-                    <div className="flex items-center gap-3">
+                    <button
+                        onClick={() => navigate('/')}
+                        className="flex items-center gap-2 hover:opacity-80 transition-opacity"
+                    >
                         <Sprout className="h-6 w-6 text-primary"/>
-                        <div>
-                            <h1 className="text-xl font-bold">{t("appName")}</h1>
-                            <p className="text-xs text-muted-foreground">{t("tagline")}</p>
+                        <div className="flex flex-col items-start">
+                            <span className="font-bold">{t('appName')}</span>
+                            <p className="text-xs text-muted-foreground leading-none">{t("tagline")}</p>
                         </div>
-                    </div>
-
+                    </button>
                     <div className="flex items-center gap-4">
-
                         <div className="flex items-center gap-3">
                             <div className="hidden sm:block text-xs text-muted-foreground">{t("language")}</div>
                             <Select value={currentLng} onValueChange={(v) => i18n.changeLanguage(v)}>

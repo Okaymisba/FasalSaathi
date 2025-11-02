@@ -12,7 +12,7 @@ import {Card, CardContent, CardDescription, CardHeader} from "@/components/ui/ca
 import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
 import {toast} from "sonner";
-import {Loader2, Sprout} from "lucide-react";
+import {ArrowLeft, Loader2, Sprout} from "lucide-react";
 import {Navbar} from "@/components/Navbar";
 
 const provinces = ["Punjab", "Sindh", "KPK", "Balochistan", "Gilgit-Baltistan", "Azad Kashmir", "ICT"];
@@ -99,18 +99,25 @@ export default function Auth() {
             setIsLoading(false);
         }
     };
-
     return (
         <>
             <Navbar/>
             <div
                 className="min-h-screen bg-gradient-to-br from-background via-primary/5 to-accent/5 flex items-center justify-center p-4">
-                <Card className="w-full max-w-md shadow-[var(--shadow-card)]">
-                    <CardHeader className="text-center bg-gradient-to-r from-primary/10 to-accent/10">
-                        <div className="flex items-center justify-center gap-2 mb-2">
-                            <Sprout className="h-8 w-8 text-primary"/>
-                            <h1 className="text-2xl font-bold">{t('appName')}</h1>
+                <Card className="w-full max-w-md mx-4 relative">
+                    <Button
+                        variant="ghost"
+                        size="icon"
+                        className="absolute left-4 top-4"
+                        onClick={() => navigate('/')}
+                    >
+                        <ArrowLeft className="h-4 w-4"/>
+                    </Button>
+                    <CardHeader className="text-center">
+                        <div className="flex justify-center mb-4">
+                            <Sprout className="h-10 w-10 text-primary"/>
                         </div>
+                        <h2 className="text-2xl font-bold">{t('appName')}</h2>
                         <CardDescription>{t('appDescription')}</CardDescription>
                     </CardHeader>
                     <CardContent className="pt-6">
