@@ -379,11 +379,14 @@ export function AnalyticsDashboard({refreshKey}: AnalyticsDashboardProps) {
                             <div className="space-y-2">
                                 <p className="text-sm font-medium text-muted-foreground">{t("analytics.topCrops.title")}</p>
                                 <div className="space-y-1">
-                                    {data.topCrops.map((crop, idx) => (
-                                        <p key={idx} className="text-sm font-semibold text-foreground">
-                                            {idx + 1}. {crop}
-                                        </p>
-                                    ))}
+                                    {data.topCrops.map((crop, idx) => {
+                                        const translatedCrop = t(`crops.${crop}`, {defaultValue: crop});
+                                        return (
+                                            <p key={idx} className="text-sm font-semibold text-foreground">
+                                                {idx + 1}. {translatedCrop}
+                                            </p>
+                                        );
+                                    })}
                                 </div>
                             </div>
                             <div className="p-3 rounded-xl bg-gradient-to-br from-primary/10 to-accent/10">
