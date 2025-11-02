@@ -84,10 +84,16 @@ export function AnalyticsDashboard({refreshKey}: AnalyticsDashboardProps) {
     }, [refreshKey, profile]);
 
     // Function to apply the selected filters
-    const applyFilters = () => {
+    const applyFilters = async () => {
+        setIsLoading(true);
         setSelectedProvince(pendingProvince);
         setSelectedDistrict(pendingDistrict);
         setSelectedCrop(pendingCrop);
+
+        // Close the filters panel after a short delay to show loading state
+        setTimeout(() => {
+            setShowFilters(false);
+        }, 100);
     };
 
     // Reset pending filters when closing the filters panel
@@ -103,18 +109,63 @@ export function AnalyticsDashboard({refreshKey}: AnalyticsDashboardProps) {
 
     // refetch analytics only when selected filters change (via applyFilters)
     useEffect(() => {
-        if (profile) {
-            fetchAnalytics();
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [selectedProvince, selectedDistrict, selectedCrop]);
+        if (!profile) return;
+
+        const fetchData = async () => {
+            try {
+                setIsLoading(true);
+                await fetchAnalytics();
+            } catch (error) {
+                console.error('Error fetching analytics:', error);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        fetchData();
+
+        // Cleanup function to prevent state updates on unmount
+        return () => {
+            // Any cleanup if needed
+        };
+    }, [selectedProvince, selectedDistrict, selectedCrop, profile]);
 
     // when pending province changes, refresh district options for the dropdown
     useEffect(() => {
-        if (!pendingProvince) return;
-        fetchDistrictOptions(pendingProvince);
-        // reset pending district selection to All when province changes
-        setPendingDistrict("All");
+        if (!pendingProvince) {
+            // If no province is selected, clear districts
+            setDistricts([]);
+            setPendingDistrict("All");
+            return;
+        }
+
+        // Fetch districts for the selected province
+        const fetchDistrictsForProvince = async () => {
+            try {
+                const {data: rows, error} = await supabase
+                    .from('farmer_data')
+                    .select('district')
+                    .eq('province', pendingProvince)
+                    .not('district', 'is', null);
+
+                if (error) throw error;
+
+                // Extract unique districts and sort them
+                const uniqueDistricts = Array.from(
+                    new Set(rows.map((r: any) => r.district as string))
+                ).sort();
+
+                setDistricts(uniqueDistricts);
+                // Reset district selection when province changes
+                setPendingDistrict("All");
+            } catch (error) {
+                console.error('Error fetching districts:', error);
+                setDistricts([]);
+                setPendingDistrict("All");
+            }
+        };
+
+        fetchDistrictsForProvince();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [pendingProvince]);
 
@@ -184,19 +235,29 @@ export function AnalyticsDashboard({refreshKey}: AnalyticsDashboardProps) {
     const fetchAnalytics = async () => {
         if (!profile) return;
 
+        console.log('Fetching analytics with filters:', {
+            province: selectedProvince,
+            district: selectedDistrict,
+            crop: selectedCrop
+        });
+
         try {
             let query = supabase
                 .from("farmer_data")
                 .select("*")
                 .order("created_at", {ascending: false});
 
-            const provinceToUse = selectedProvince ?? profile.province;
-            if (provinceToUse) {
-                query = query.eq("province", provinceToUse);
+            // Apply province filter if selected
+            if (selectedProvince) {
+                query = query.eq("province", selectedProvince);
             }
+
+            // Apply district filter if selected and not "All"
             if (selectedDistrict && selectedDistrict !== "All") {
                 query = query.eq("district", selectedDistrict);
             }
+
+            // Apply crop filter if selected and not "All"
             if (selectedCrop && selectedCrop !== "All") {
                 query = query.eq("crop", selectedCrop);
             }
@@ -312,7 +373,7 @@ export function AnalyticsDashboard({refreshKey}: AnalyticsDashboardProps) {
                             )}
                         </div>
                     </div>
-                    <Button variant="outline" size="sm" className="gap-2" onClick={() => setShowFilters((v) => !v)}>
+                    <Button variant="outline" size="sm" className="gap-2" onClick={toggleFilters}>
                         <SlidersHorizontal
                             className={`h-4 w-4 transition-transform duration-300 ${showFilters ? "rotate-90" : "rotate-0"}`}/>
                         {showFilters ? t("analytics.filters.hide") : t("analytics.filters.show")}
@@ -334,8 +395,8 @@ export function AnalyticsDashboard({refreshKey}: AnalyticsDashboardProps) {
                             <div className="space-y-2">
                                 <Label>{t("analytics.filters.province")}</Label>
                                 <Select
-                                    value={selectedProvince ?? ""}
-                                    onValueChange={(v) => setSelectedProvince(v)}
+                                    value={pendingProvince ?? ""}
+                                    onValueChange={(v) => setPendingProvince(v || null)}
                                 >
                                     <SelectTrigger className="bg-background">
                                         <SelectValue placeholder={t("analytics.filters.placeholders.province")}/>
@@ -351,8 +412,9 @@ export function AnalyticsDashboard({refreshKey}: AnalyticsDashboardProps) {
                             <div className="space-y-2">
                                 <Label>{t("analytics.filters.district")}</Label>
                                 <Select
-                                    value={selectedDistrict}
-                                    onValueChange={(v) => setSelectedDistrict(v)}
+                                    value={pendingDistrict}
+                                    onValueChange={(v) => setPendingDistrict(v)}
+                                    disabled={!pendingProvince}
                                 >
                                     <SelectTrigger className="bg-background">
                                         <SelectValue placeholder={t("analytics.filters.placeholders.all")}/>
@@ -369,8 +431,8 @@ export function AnalyticsDashboard({refreshKey}: AnalyticsDashboardProps) {
                             <div className="space-y-2">
                                 <Label>{t("analytics.filters.crop")}</Label>
                                 <Select
-                                    value={selectedCrop}
-                                    onValueChange={(v) => setSelectedCrop(v)}
+                                    value={pendingCrop}
+                                    onValueChange={(v) => setPendingCrop(v)}
                                 >
                                     <SelectTrigger className="bg-background">
                                         <SelectValue placeholder={t("analytics.filters.placeholders.all")}/>
@@ -382,6 +444,38 @@ export function AnalyticsDashboard({refreshKey}: AnalyticsDashboardProps) {
                                         ))}
                                     </SelectContent>
                                 </Select>
+                            </div>
+
+                            {/* Apply Filters Button */}
+                            <div className="col-span-full flex justify-end space-x-3 pt-2">
+                                <Button
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={toggleFilters}
+                                    className="px-4"
+                                >
+                                    {t("common.cancel")}
+                                </Button>
+                                <Button
+                                    size="sm"
+                                    onClick={() => {
+                                        setSelectedProvince(pendingProvince);
+                                        setSelectedDistrict(pendingDistrict);
+                                        setSelectedCrop(pendingCrop);
+                                        setShowFilters(false);
+                                    }}
+                                    className="px-6"
+                                    disabled={isLoading}
+                                >
+                                    {isLoading ? (
+                                        <>
+                                            <Loader2 className="mr-2 h-4 w-4 animate-spin"/>
+                                            {t("common.applying")}
+                                        </>
+                                    ) : (
+                                        t("common.apply")
+                                    )}
+                                </Button>
                             </div>
                         </div>
                     </CardContent>
