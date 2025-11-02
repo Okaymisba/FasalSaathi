@@ -50,12 +50,14 @@ export function Navbar() {
                                         {currentLng === "en" && t("languages.en")}
                                         {currentLng === "ur" && t("languages.ur")}
                                         {currentLng === "sd" && t("languages.sd")}
+                                        {currentLng === "pu" && t("languages.pu")}
                                     </SelectValue>
                                 </SelectTrigger>
                                 <SelectContent>
                                     <SelectItem value="en">{t("languages.en")}</SelectItem>
                                     <SelectItem value="ur">{t("languages.ur")}</SelectItem>
                                     <SelectItem value="sd">{t("languages.sd")}</SelectItem>
+                                    <SelectItem value="pu">{t("languages.pu")}</SelectItem>
                                 </SelectContent>
                             </Select>
 

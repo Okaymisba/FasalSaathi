@@ -26,7 +26,15 @@ import sdDashboard from "./locales/sd/dashboard.json";
 import sdLeaderboard from "./locales/sd/leaderboard.json";
 import sdAuth from "./locales/sd/auth.json";
 
-export const RTL_LANGS = new Set(["ur", "sd"]);
+// Punjabi (RTL)
+import puHeader from "./locales/pu/header.json";
+import puLandingPage from "./locales/pu/landingPage.json";
+import puFooter from "./locales/pu/footer.json";
+import puDashboard from "./locales/pu/dashboard.json";
+import puLeaderboard from "./locales/pu/leaderboard.json";
+import puAuth from "./locales/pu/auth.json";
+
+export const RTL_LANGS = new Set(["ur", "sd", "pu"]);
 
 function applyDir(lng: string) {
     if (typeof document === "undefined") return;
@@ -62,6 +70,14 @@ i18n
                 dashboard: sdDashboard,
                 leaderboard: sdLeaderboard,
                 auth: sdAuth,
+            },
+            pu: {
+                header: puHeader,
+                landingPage: puLandingPage,
+                footer: puFooter,
+                dashboard: puDashboard,
+                leaderboard: puLeaderboard,
+                auth: puAuth,
             },
         },
         fallbackLng: "en",
