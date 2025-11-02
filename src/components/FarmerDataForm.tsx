@@ -141,11 +141,13 @@ export function FarmerDataForm({onSuccess}: FarmerDataFormProps) {
         }),
         harvested_amount: z
             .string()
+            .min(1, t("form.validation.harvestedRequired"))
             .refine((val) => !isNaN(Number(val)) && Number(val) >= 0, {
                 message: t("form.validation.harvestedNonNegative"),
             }),
         wastage: z
             .string()
+            .min(1, t("form.validation.wastageRequired"))
             .refine(
                 (val) => !isNaN(Number(val)) && Number(val) >= 0 && Number(val) <= 100,
                 {message: t("form.validation.wastageRange")}
