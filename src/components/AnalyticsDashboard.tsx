@@ -11,6 +11,22 @@ import {Label} from "@/components/ui/label";
 import {Button} from "@/components/ui/button";
 import {useTranslation} from "react-i18next";
 
+// Crop keys that match the translation keys
+const CROP_KEYS = [
+    'wheat', 'rice', 'maize', 'barley', 'sorghum', 'millet', 'oats',
+    'cotton', 'sugarcane', 'tobacco', 'jute', 'kenaf',
+    'chickpea', 'lentil', 'mungbean', 'blackgram', 'peas', 'cowpea', 'pigeonpea',
+    'rapeseedmustard', 'mustard', 'canola', 'sunflower', 'sesame', 'groundnut', 'soybean', 'safflower', 'castor',
+    'berseem', 'lucerne', 'sorghumsudangrass', 'guineagrass', 'maizefodder',
+    'potato', 'onion', 'tomato', 'chili', 'okra', 'cauliflower', 'cabbage', 'brinjal', 'garlic', 'ginger',
+    'spinach', 'coriander', 'cucumber', 'carrot', 'radish', 'turnip', 'pumpkin', 'bittergourd', 'bottlegourd',
+    'tinda', 'peasvegetable', 'mango', 'citrus', 'banana', 'dates', 'guava', 'apple', 'apricot', 'peach',
+    'plum', 'pear', 'pomegranate', 'grapes', 'watermelon', 'muskmelon', 'strawberry', 'turmeric', 'cumin',
+    'fennel', 'fenugreek', 'blackpepper', 'cardamom', 'nigella', 'quinoa', 'buckwheat', 'flax', 'teff'
+] as const;
+
+type CropKey = typeof CROP_KEYS[number];
+
 interface FarmerData {
     id: number;
     region: string;
@@ -41,7 +57,7 @@ export function AnalyticsDashboard({refreshKey}: AnalyticsDashboardProps) {
     const {profile} = useAuth();
     const [provinces, setProvinces] = useState<string[]>([]);
     const [districts, setDistricts] = useState<string[]>([]);
-    const [crops, setCrops] = useState<string[]>([]);
+    const [availableCrops, setAvailableCrops] = useState<CropKey[]>([]);
 
     const [selectedProvince, setSelectedProvince] = useState<string | null>(null);
     const [selectedDistrict, setSelectedDistrict] = useState<string>("All");
@@ -179,15 +195,22 @@ export function AnalyticsDashboard({refreshKey}: AnalyticsDashboardProps) {
 
             const provSet = new Set<string>();
             const distSet = new Set<string>();
-            const cropSet = new Set<string>();
+            const cropKeySet = new Set<CropKey>();
             rows?.forEach((r: any) => {
                 if (r.province) provSet.add(r.province);
                 if (r.district) distSet.add(r.district);
-                if (r.crop) cropSet.add(r.crop);
+                if (r.crop && CROP_KEYS.includes(r.crop as CropKey)) {
+                    cropKeySet.add(r.crop as CropKey);
+                }
             });
             const provArr = Array.from(provSet).sort();
             setProvinces(provArr);
-            setCrops(Array.from(cropSet).sort());
+
+            // Sort crops by their translated names
+            const sortedCrops = Array.from(cropKeySet).sort((a, b) =>
+                t(`crops.${a}`).localeCompare(t(`crops.${b}`))
+            );
+            setAvailableCrops(sortedCrops);
 
             // initialize districts based on selected or profile province
             const baseProvince = pendingProvince ?? selectedProvince ?? profile?.province ?? null;
@@ -439,8 +462,10 @@ export function AnalyticsDashboard({refreshKey}: AnalyticsDashboardProps) {
                                     </SelectTrigger>
                                     <SelectContent className="bg-popover z-50">
                                         <SelectItem value="All">{t("analytics.filters.placeholders.all")}</SelectItem>
-                                        {crops.map((c) => (
-                                            <SelectItem key={c} value={c}>{c}</SelectItem>
+                                        {availableCrops.map((cropKey) => (
+                                            <SelectItem key={cropKey} value={cropKey}>
+                                                {t(`crops.${cropKey}`, cropKey)}
+                                            </SelectItem>
                                         ))}
                                     </SelectContent>
                                 </Select>
