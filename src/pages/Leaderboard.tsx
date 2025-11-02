@@ -1,5 +1,6 @@
 import {useEffect, useState} from "react";
 import {useNavigate} from "react-router-dom";
+import {useTranslation} from "react-i18next";
 import {supabase} from "@/integrations/supabase/client";
 import {useAuth} from "@/hooks/useAuth";
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow,} from "@/components/ui/table";
@@ -20,6 +21,7 @@ interface LeaderboardEntry {
 }
 
 export default function Leaderboard() {
+    const {t} = useTranslation('leaderboard');
     const navigate = useNavigate();
     const {user} = useAuth();
     const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([]);
@@ -157,18 +159,18 @@ export default function Leaderboard() {
                                 onClick={() => navigate(-1)}
                             >
                                 <ArrowLeft className="h-4 w-4"/>
-                                <span className="sr-only">Back</span>
+                                <span className="sr-only">{t('back')}</span>
                             </Button>
-                            <h1 className="text-3xl font-bold text-foreground">Leaderboard</h1>
+                            <h1 className="text-3xl font-bold text-foreground">{t('title')}</h1>
                         </div>
                         <p className="text-muted-foreground ml-12">
-                            Top performing farmers ranked by yield efficiency
+                            {t('subtitle')}
                         </p>
                     </div>
                     {userRank && (
                         <Card className="bg-primary/10">
                             <CardContent className="p-4">
-                                <p className="text-sm text-muted-foreground">Your Rank</p>
+                                <p className="text-sm text-muted-foreground">{t('yourRank')}</p>
                                 <p className="text-2xl font-bold text-primary">#{userRank}</p>
                             </CardContent>
                         </Card>
@@ -177,19 +179,19 @@ export default function Leaderboard() {
 
                 <Card>
                     <CardHeader>
-                        <CardTitle>Performance Rankings</CardTitle>
+                        <CardTitle>{t('performanceRankings')}</CardTitle>
                     </CardHeader>
                     <CardContent>
                         <div className="rounded-md border">
                             <Table>
                                 <TableHeader>
                                     <TableRow>
-                                        <TableHead className="w-20">Rank</TableHead>
-                                        <TableHead>Farmer Name</TableHead>
-                                        <TableHead>Province</TableHead>
-                                        <TableHead className="text-right">Avg Yield/Acre (Tons)</TableHead>
-                                        <TableHead className="text-right">Avg Wastage (%)</TableHead>
-                                        <TableHead className="text-right">Score</TableHead>
+                                        <TableHead className="w-20">{t('rank')}</TableHead>
+                                        <TableHead>{t('farmerName')}</TableHead>
+                                        <TableHead>{t('province')}</TableHead>
+                                        <TableHead className="text-right">{t('avgYieldPerAcre')}</TableHead>
+                                        <TableHead className="text-right">{t('avgWastage')}</TableHead>
+                                        <TableHead className="text-right">{t('score')}</TableHead>
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>
@@ -229,29 +231,26 @@ export default function Leaderboard() {
                     <CardHeader>
                         <CardTitle className="flex items-center gap-2">
                             <Trophy className="h-5 w-5 text-primary"/>
-                            Rewards & Recognition
+                            {t('rewardsTitle')}
                         </CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-3">
                         <div className="flex items-start gap-3">
                             <span className="text-2xl">🥇</span>
                             <p className="text-sm">
-                                <strong>Top 3 farmers this month</strong> will receive fertilizer vouchers
-                                and premium seeds!
+                                <strong>{t('rewards.0.title')}</strong> {t('rewards.0.description')}
                             </p>
                         </div>
                         <div className="flex items-start gap-3">
                             <span className="text-2xl">🥈</span>
                             <p className="text-sm">
-                                <strong>Top 10 farmers</strong> get exclusive badges on their profile and
-                                featured recognition.
+                                <strong>{t('rewards.1.title')}</strong> {t('rewards.1.description')}
                             </p>
                         </div>
                         <div className="flex items-start gap-3">
                             <span className="text-2xl">🎯</span>
                             <p className="text-sm">
-                                <strong>All participants</strong> contribute to regional agricultural
-                                insights and help improve farming practices across Pakistan.
+                                <strong>{t('rewards.2.title')}</strong> {t('rewards.2.description')}
                             </p>
                         </div>
                     </CardContent>
