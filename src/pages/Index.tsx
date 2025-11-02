@@ -60,7 +60,7 @@ const Index = () => {
 
                     <TabsContent value="analytics" className="mt-0">
                         <div className="space-y-6">
-                            <AIInsights />
+                            <AIInsights/>
                             <AnalyticsDashboard refreshKey={refreshKey}/>
                         </div>
                     </TabsContent>
