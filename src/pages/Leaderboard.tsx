@@ -5,6 +5,7 @@ import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow,} from "@/
 import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card";
 import {Award, Medal, Trophy} from "lucide-react";
 import {Skeleton} from "@/components/ui/skeleton";
+import {Navbar} from "@/components/Navbar";
 
 interface LeaderboardEntry {
     farmer_id: string;
@@ -140,105 +141,108 @@ export default function Leaderboard() {
     }
 
     return (
-        <div className="container mx-auto p-6 space-y-6">
-            <div className="flex items-center justify-between">
-                <div>
-                    <h1 className="text-3xl font-bold text-foreground">Leaderboard</h1>
-                    <p className="text-muted-foreground mt-2">
-                        Top performing farmers ranked by yield efficiency
-                    </p>
+        <>
+            <Navbar/>
+            <div className="container mx-auto p-6 space-y-6">
+                <div className="flex items-center justify-between">
+                    <div>
+                        <h1 className="text-3xl font-bold text-foreground">Leaderboard</h1>
+                        <p className="text-muted-foreground mt-2">
+                            Top performing farmers ranked by yield efficiency
+                        </p>
+                    </div>
+                    {userRank && (
+                        <Card className="bg-primary/10">
+                            <CardContent className="p-4">
+                                <p className="text-sm text-muted-foreground">Your Rank</p>
+                                <p className="text-2xl font-bold text-primary">#{userRank}</p>
+                            </CardContent>
+                        </Card>
+                    )}
                 </div>
-                {userRank && (
-                    <Card className="bg-primary/10">
-                        <CardContent className="p-4">
-                            <p className="text-sm text-muted-foreground">Your Rank</p>
-                            <p className="text-2xl font-bold text-primary">#{userRank}</p>
-                        </CardContent>
-                    </Card>
-                )}
-            </div>
 
-            <Card>
-                <CardHeader>
-                    <CardTitle>Performance Rankings</CardTitle>
-                </CardHeader>
-                <CardContent>
-                    <div className="rounded-md border">
-                        <Table>
-                            <TableHeader>
-                                <TableRow>
-                                    <TableHead className="w-20">Rank</TableHead>
-                                    <TableHead>Farmer Name</TableHead>
-                                    <TableHead>Province</TableHead>
-                                    <TableHead className="text-right">Avg Yield/Acre (Tons)</TableHead>
-                                    <TableHead className="text-right">Avg Wastage (%)</TableHead>
-                                    <TableHead className="text-right">Score</TableHead>
-                                </TableRow>
-                            </TableHeader>
-                            <TableBody>
-                                {leaderboard.map((entry) => (
-                                    <TableRow
-                                        key={entry.farmer_id}
-                                        className={`${getRankColor(entry.rank)} ${
-                                            user?.id === entry.farmer_id ? "border-l-4 border-primary" : ""
-                                        }`}
-                                    >
-                                        <TableCell className="font-medium">
-                                            <div className="flex items-center gap-2">
-                                                {getRankIcon(entry.rank)}
-                                                <span>#{entry.rank}</span>
-                                            </div>
-                                        </TableCell>
-                                        <TableCell className="font-medium">{entry.farmer_name}</TableCell>
-                                        <TableCell>{entry.province}</TableCell>
-                                        <TableCell className="text-right">
-                                            {entry.avg_yield_per_acre.toFixed(2)}
-                                        </TableCell>
-                                        <TableCell className="text-right">
-                                            {entry.avg_wastage.toFixed(2)}%
-                                        </TableCell>
-                                        <TableCell className="text-right font-semibold">
-                                            {entry.score.toFixed(2)}
-                                        </TableCell>
+                <Card>
+                    <CardHeader>
+                        <CardTitle>Performance Rankings</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        <div className="rounded-md border">
+                            <Table>
+                                <TableHeader>
+                                    <TableRow>
+                                        <TableHead className="w-20">Rank</TableHead>
+                                        <TableHead>Farmer Name</TableHead>
+                                        <TableHead>Province</TableHead>
+                                        <TableHead className="text-right">Avg Yield/Acre (Tons)</TableHead>
+                                        <TableHead className="text-right">Avg Wastage (%)</TableHead>
+                                        <TableHead className="text-right">Score</TableHead>
                                     </TableRow>
-                                ))}
-                            </TableBody>
-                        </Table>
-                    </div>
-                </CardContent>
-            </Card>
+                                </TableHeader>
+                                <TableBody>
+                                    {leaderboard.map((entry) => (
+                                        <TableRow
+                                            key={entry.farmer_id}
+                                            className={`${getRankColor(entry.rank)} ${
+                                                user?.id === entry.farmer_id ? "border-l-4 border-primary" : ""
+                                            }`}
+                                        >
+                                            <TableCell className="font-medium">
+                                                <div className="flex items-center gap-2">
+                                                    {getRankIcon(entry.rank)}
+                                                    <span>#{entry.rank}</span>
+                                                </div>
+                                            </TableCell>
+                                            <TableCell className="font-medium">{entry.farmer_name}</TableCell>
+                                            <TableCell>{entry.province}</TableCell>
+                                            <TableCell className="text-right">
+                                                {entry.avg_yield_per_acre.toFixed(2)}
+                                            </TableCell>
+                                            <TableCell className="text-right">
+                                                {entry.avg_wastage.toFixed(2)}%
+                                            </TableCell>
+                                            <TableCell className="text-right font-semibold">
+                                                {entry.score.toFixed(2)}
+                                            </TableCell>
+                                        </TableRow>
+                                    ))}
+                                </TableBody>
+                            </Table>
+                        </div>
+                    </CardContent>
+                </Card>
 
-            <Card className="bg-gradient-to-r from-primary/10 to-secondary/10">
-                <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                        <Trophy className="h-5 w-5 text-primary"/>
-                        Rewards & Recognition
-                    </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-3">
-                    <div className="flex items-start gap-3">
-                        <span className="text-2xl">🥇</span>
-                        <p className="text-sm">
-                            <strong>Top 3 farmers this month</strong> will receive fertilizer vouchers
-                            and premium seeds!
-                        </p>
-                    </div>
-                    <div className="flex items-start gap-3">
-                        <span className="text-2xl">🥈</span>
-                        <p className="text-sm">
-                            <strong>Top 10 farmers</strong> get exclusive badges on their profile and
-                            featured recognition.
-                        </p>
-                    </div>
-                    <div className="flex items-start gap-3">
-                        <span className="text-2xl">🎯</span>
-                        <p className="text-sm">
-                            <strong>All participants</strong> contribute to regional agricultural
-                            insights and help improve farming practices across Pakistan.
-                        </p>
-                    </div>
-                </CardContent>
-            </Card>
-        </div>
+                <Card className="bg-gradient-to-r from-primary/10 to-secondary/10">
+                    <CardHeader>
+                        <CardTitle className="flex items-center gap-2">
+                            <Trophy className="h-5 w-5 text-primary"/>
+                            Rewards & Recognition
+                        </CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-3">
+                        <div className="flex items-start gap-3">
+                            <span className="text-2xl">🥇</span>
+                            <p className="text-sm">
+                                <strong>Top 3 farmers this month</strong> will receive fertilizer vouchers
+                                and premium seeds!
+                            </p>
+                        </div>
+                        <div className="flex items-start gap-3">
+                            <span className="text-2xl">🥈</span>
+                            <p className="text-sm">
+                                <strong>Top 10 farmers</strong> get exclusive badges on their profile and
+                                featured recognition.
+                            </p>
+                        </div>
+                        <div className="flex items-start gap-3">
+                            <span className="text-2xl">🎯</span>
+                            <p className="text-sm">
+                                <strong>All participants</strong> contribute to regional agricultural
+                                insights and help improve farming practices across Pakistan.
+                            </p>
+                        </div>
+                    </CardContent>
+                </Card>
+            </div>
+        </>
     );
 }
