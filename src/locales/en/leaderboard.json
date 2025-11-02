@@ -1,1 +1,28 @@
-{}
+{
+  "title": "Leaderboard",
+  "subtitle": "Top performing farmers ranked by yield efficiency",
+  "yourRank": "Your Rank",
+  "performanceRankings": "Performance Rankings",
+  "rank": "Rank",
+  "farmerName": "Farmer Name",
+  "province": "Province",
+  "avgYieldPerAcre": "Avg Yield/Acre (Tons)",
+  "avgWastage": "Avg Wastage (%)",
+  "score": "Score",
+  "rewardsTitle": "Rewards & Recognition",
+  "rewards": [
+    {
+      "title": "Top 3 farmers this month",
+      "description": "will receive fertilizer vouchers and premium seeds!"
+    },
+    {
+      "title": "Top 10 farmers",
+      "description": "get exclusive badges on their profile and featured recognition."
+    },
+    {
+      "title": "All participants",
+      "description": "contribute to regional agricultural insights and help improve farming practices across Pakistan."
+    }
+  ],
+  "back": "Back"
+}
