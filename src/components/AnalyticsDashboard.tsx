@@ -335,17 +335,17 @@ export function AnalyticsDashboard({refreshKey}: AnalyticsDashboardProps) {
         );
     }
 
-    if (!data || data.totalSubmissions === 0) {
+    // Show loading state
+    if (isLoading) {
         return (
-            <Card className="shadow-[var(--shadow-card)] border-border/50">
-                <CardContent className="py-12 text-center">
-                    <Database className="h-12 w-12 mx-auto mb-4 text-muted-foreground"/>
-                    <h3 className="text-lg font-semibold mb-2">{t("analytics.noData.title")}</h3>
-                    <p className="text-muted-foreground">{t("analytics.noData.desc")}</p>
-                </CardContent>
-            </Card>
+            <div className="flex items-center justify-center py-12">
+                <Loader2 className="h-8 w-8 animate-spin text-primary"/>
+            </div>
         );
     }
+
+    // Show no data message but keep the filters visible
+    const showNoData = !data || data.totalSubmissions === 0;
 
     return (
         <div className="space-y-6">
