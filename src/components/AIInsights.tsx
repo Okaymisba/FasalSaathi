@@ -190,7 +190,7 @@ export const AIInsights = () => {
                 </CardHeader>
                 <CardContent>
                     <p className="text-muted-foreground text-center py-4">
-                        {t("aiInsights.noInsights")}
+                        {t("analytics.aiInsights.noInsights")}
                     </p>
                 </CardContent>
             </Card>
