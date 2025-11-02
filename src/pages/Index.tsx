@@ -1,6 +1,7 @@
 import {useState} from "react";
 import {FarmerDataForm} from "@/components/FarmerDataForm";
 import {AnalyticsDashboard} from "@/components/AnalyticsDashboard";
+import {AIInsights} from "@/components/AIInsights";
 import {Navbar} from "@/components/Navbar";
 import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs";
 import {BarChart3, Sprout} from "lucide-react";
@@ -58,7 +59,10 @@ const Index = () => {
                     </TabsContent>
 
                     <TabsContent value="analytics" className="mt-0">
-                        <AnalyticsDashboard refreshKey={refreshKey}/>
+                        <div className="space-y-6">
+                            <AIInsights />
+                            <AnalyticsDashboard refreshKey={refreshKey}/>
+                        </div>
                     </TabsContent>
                 </Tabs>
             </main>

@@ -16,6 +16,17 @@
       "title": "No Data Yet",
       "desc": "Submit your first crop data to see analytics here."
     },
+    "aiInsights": {
+      "title": "AI Insights & Recommendations",
+      "noInsights": "No AI insights available yet. Submit your crop data to get personalized recommendations.",
+      "yieldHigh": "Your crop yield is performing above average for your region — excellent productivity!",
+      "yieldLow": "Your yield is lower than expected — check irrigation and fertilizer balance.",
+      "wastageHigh": "Significant wastage detected. You might need better transport or packaging.",
+      "diseaseRiskLow": "Currently, your fields show low risk of disease — keep regular checks.",
+      "irrigationSchedule": "Based on soil and crop type, next irrigation is due in approximately {{days}} days.",
+      "fertilizerPlan": "Recommended fertilizer plan: {{plan}}",
+      "nextCropSuggestion": "Next season, rotate with {{crop}} to replenish soil nutrients."
+    },
     "scopeLabel": "Analytics scope:",
     "filters": {
       "hide": "Hide",
