@@ -7,18 +7,21 @@ import enHeader from "./locales/en/header.json";
 import enLandingPage from "./locales/en/landingPage.json";
 import enFooter from "./locales/en/footer.json";
 import enDashboard from "./locales/en/dashboard.json";
+import enLeaderboard from "./locales/en/leaderboard.json";
 
 // Urdu (RTL)
 import urHeader from "./locales/ur/header.json";
 import urLandingPage from "./locales/ur/landingPage.json";
 import urFooter from "./locales/ur/footer.json";
 import urDashboard from "./locales/ur/dashboard.json";
+import urLeaderboard from "./locales/ur/leaderboard.json";
 
 // Sindhi (RTL)
 import sdHeader from "./locales/sd/header.json";
 import sdLandingPage from "./locales/sd/landingPage.json";
 import sdFooter from "./locales/sd/footer.json";
 import sdDashboard from "./locales/sd/dashboard.json";
+import sdLeaderboard from "./locales/sd/leaderboard.json";
 
 export const RTL_LANGS = new Set(["ur", "sd"]);
 
@@ -38,18 +41,21 @@ i18n
                 landingPage: enLandingPage,
                 footer: enFooter,
                 dashboard: enDashboard,
+                leaderboard: enLeaderboard,
             },
             ur: {
                 header: urHeader,
                 landingPage: urLandingPage,
                 footer: urFooter,
                 dashboard: urDashboard,
+                leaderboard: urLeaderboard,
             },
             sd: {
                 header: sdHeader,
                 landingPage: sdLandingPage,
                 footer: sdFooter,
                 dashboard: sdDashboard,
+                leaderboard: sdLeaderboard,
             },
         },
         fallbackLng: "en",
@@ -58,6 +64,7 @@ i18n
             "landingPage",
             "footer",
             "dashboard",
+            "leaderboard",
         ],
         defaultNS: "header",
         interpolation: {escapeValue: false},
