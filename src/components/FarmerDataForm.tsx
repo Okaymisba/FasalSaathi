@@ -248,7 +248,6 @@ export function FarmerDataForm({onSuccess}: FarmerDataFormProps) {
                                     <li>{t("form.intro.items.harvested")}</li>
                                     <li>{t("form.intro.items.wastage")}</li>
                                     <li>{t("form.intro.items.reason")}</li>
-                                    <li>{t("form.intro.items.confirm")}</li>
                                 </ul>
                                 <p className="text-xs text-muted-foreground mt-3">
                                     {t("form.intro.note")}
