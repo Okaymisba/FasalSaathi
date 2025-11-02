@@ -253,10 +253,14 @@
     "validation": {
       "cropRequired": "Please select a crop type",
       "areaPositive": "Area must be greater than 0",
+      "harvestedRequired": "Harvested amount is required",
       "harvestedNonNegative": "Harvested amount must be 0 or greater",
+      "wastageRequired": "Wastage percentage is required",
+      "atLeastOneImage": "Please upload at least one image",
       "wastageRange": "Wastage must be between 0 and 100",
       "reasonRequired": "Please select a reason",
       "maxImages": "You can upload up to 5 images",
+      "imagesRequired": "At least one image is required",
       "invalidImageType": "Only JPG, PNG, and WebP images are supported",
       "attestationConfirm": "You must confirm the data is accurate"
     }

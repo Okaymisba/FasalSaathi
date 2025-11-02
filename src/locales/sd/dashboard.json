@@ -251,11 +251,18 @@
     },
     "validation": {
       "cropRequired": "مهرباني ڪري فصل جي قسم چونڊيو",
-      "areaPositive": "رقبو 0 کان وڌيڪ هجڻ گهرجي",
-      "harvestedNonNegative": "ڪٽيل مقدار 0 يا وڌيڪ هجڻ گهرجي",
-      "wastageRange": "ضايع 0 ۽ 100 جي وچ ۾ هجڻ گهرجي",
+      "areaPositive": "علائقو 0 کان وڏو هجڻ گهرجي",
+      "harvestedRequired": "ڪٽيل مقدار لازمي آهي",
+      "harvestedNonNegative": "ڪٽيل مقدار 0 يا ان کان وڌيڪ هجڻ گهرجي",
+      "wastageRequired": "ضايع ٿيڻ جي شرح لازمي آهي",
+      "atLeastOneImage": "مهرباني ڪري گهٽ ۾ گهٽ هڪ تصوير اپلوڊ ڪريو",
+      "wastageRange": "ضايع ٿيڻ جي شرح 0 ۽ 100 جي وچ ۾ هجڻ گهرجي",
       "reasonRequired": "مهرباني ڪري سبب چونڊيو",
-      "attestationConfirm": "توهان کي تصديق ڪرڻي پوندي ته ڊيٽا صحيح آهي"
+      "maxImages": "توهان 5 تائين تصويرون اپلوڊ ڪري سگهو ٿا",
+      "imagesRequired": "گهٽ ۾ گهٽ هڪ تصوير ضروري آهي",
+      "invalidImageType": "رڳو JPG، PNG ۽ WebP تصويرون سپورٽ ڪيون وڃن ٿيون",
+      "attestationConfirm": "توهان کي تصديق ڪرڻي آهي ته ڊيٽا صحيح آهي"
     }
+
   }
 }

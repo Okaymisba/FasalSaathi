@@ -197,8 +197,10 @@
       }
     },
     "labels": {
-      "uploadImages": "فصل کی تصاویر اپ لوڈ کریں",
-      "crop": "فصل کی قسم *",
+      "maxImages": "آپ زیادہ سے زیادہ 5 تصاویر اپ لوڈ کر سکتے ہیں",
+      "imagesRequired": "کم از کم ایک تصویر درکار ہے",
+      "invalidImageType": "صرف JPG، PNG اور WebP تصاویر کی حمایت کی جاتی ہے",
+      "requiredImageUpload": "کم از کم ایک تصویر اپ لوڈ کریں۔",
       "area": "کاشت شدہ رقبہ (ایکڑ) *",
       "harvested_amount": "کٹائی شدہ مقدار (ٹن) *",
       "wastage": "ضیاع (%) *",
@@ -252,10 +254,17 @@
     "validation": {
       "cropRequired": "براہ کرم فصل کی قسم منتخب کریں",
       "areaPositive": "رقبہ 0 سے زیادہ ہونا چاہیے",
-      "harvestedNonNegative": "کٹائی شدہ مقدار 0 یا اس سے زیادہ ہونی چاہیے",
-      "wastageRange": "ضیاع 0 سے 100 کے درمیان ہونا چاہیے",
+      "harvestedRequired": "کٹائی کی گئی مقدار ضروری ہے",
+      "harvestedNonNegative": "کٹائی کی گئی مقدار 0 یا اس سے زیادہ ہونی چاہیے",
+      "wastageRequired": "ضائع ہونے کی شرح ضروری ہے",
+      "atLeastOneImage": "براہ کرم کم از کم ایک تصویر اپلوڈ کریں",
+      "wastageRange": "ضائع ہونے کی شرح 0 اور 100 کے درمیان ہونی چاہیے",
       "reasonRequired": "براہ کرم وجہ منتخب کریں",
+      "maxImages": "آپ زیادہ سے زیادہ 5 تصاویر اپلوڈ کر سکتے ہیں",
+      "imagesRequired": "کم از کم ایک تصویر ضروری ہے",
+      "invalidImageType": "صرف JPG، PNG اور WebP تصاویر کی اجازت ہے",
       "attestationConfirm": "آپ کو تصدیق کرنی ہوگی کہ ڈیٹا درست ہے"
     }
+
   }
 }
